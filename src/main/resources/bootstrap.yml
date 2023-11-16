@@ -1,0 +1,53 @@
+management:
+  info:
+    git:
+      mode: full
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "*"
+spring:
+  application:
+    name: cn-authorization-center
+  jackson:
+    locale: zh_CN
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    deserialization:
+      fail-on-unknown-properties: false
+  mvc:
+    format:
+      date: yyyy-MM-dd
+      date-time: ${spring.jackson.date-format}
+      time: HH:mm:ss
+  output:
+    ansi:
+      enabled: always
+  pid:
+    fail-on-write-error: true
+    file: ${user.home}/${spring.application.name}.pid
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+logging:
+  file:
+    name: ${user.home}/logs/${spring.application.name}.log
+    path: ${user.home}/logs
+  level:
+    "[cn.cainiao]": debug
+    "[org.apache.logging]": off
+    "[io.swagger]": off
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA URL:http://192.168.3.24:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}

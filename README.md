@@ -1,4 +1,4 @@
-# cn-cloud-auth
+# cn-authorization-center
 
 #### 介绍
 授权中心
