@@ -9,25 +9,14 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>cn-authorization-center</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>cn-authorization-center</name>
+	<artifactId>cn-authorization-center-project</artifactId>
+	<packaging>pom</packaging>
+	<name>cn-authorization-center-project</name>
 	<description>Authorization Center</description>
 
-	<properties>
-		<nutz.version>1.r.69.v20220703</nutz.version>
-	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-oauth2-authorization-server</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.nutz</groupId>
-			<artifactId>nutz</artifactId>
-			<version>${nutz.version}</version>
-		</dependency>
-	</dependencies>
+	<modules>
+		<module>cn-oidc</module>
+		<module>cn-authorization-center</module>
+		<module>cn-auth</module>
+	</modules>
 </project>
