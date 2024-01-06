@@ -4,10 +4,10 @@ server:
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://192.168.3.24:333/authorization-center?characterEncoding=UTF-8
-    username: cainiao
-    password: abc
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:postgresql://192.168.3.24:31960/cn-authorization-center
+    username: postgres
+    password: G00dl^ck
+    driver-class-name: org.postgresql.Driver
     druid:
       db-type: mysql
       filters: stat,wall,log4j2

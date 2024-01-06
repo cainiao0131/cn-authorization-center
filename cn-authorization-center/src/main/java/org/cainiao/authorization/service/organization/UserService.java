@@ -16,6 +16,7 @@ import org.cainiao.common.util.exception.BusinessException;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -37,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@EnableConfigurationProperties(AdministratorInitializationConfigurationProperties.class)
 public class UserService {
 
     private static final String HAS_KEY = "hasKey";

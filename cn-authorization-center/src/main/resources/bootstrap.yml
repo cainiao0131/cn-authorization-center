@@ -42,6 +42,7 @@ logging:
     "[cn.cainiao]": debug
     "[org.apache.logging]": off
     "[io.swagger]": off
+    "[org.springframework.security]": debug
 eureka:
   client:
     register-with-eureka: true

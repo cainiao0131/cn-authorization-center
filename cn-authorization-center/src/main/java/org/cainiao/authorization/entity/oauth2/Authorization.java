@@ -4,7 +4,6 @@ package org.cainiao.authorization.entity.oauth2;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder.Default;
@@ -25,7 +24,6 @@ import java.time.LocalDateTime;
  *
  * Author: Cai Niao(wdhlzd@163.com)
  */
-@Entity
 @Table(name = "t_oauth2_authorization")
 @Schema(name = "Authorization", description = "权限")
 @Data
