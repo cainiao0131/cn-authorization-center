@@ -15,6 +15,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -29,10 +30,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false, of = "id")
-public class IdBaseEntity extends BaseEntity {
+public class IdBaseEntity implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = -1574346548208149719L;
+    private static final long serialVersionUID = -8644239913476673966L;
 
     @Id
     @GeneratedValue

@@ -2,6 +2,8 @@ package org.cainiao.authorization.entity.acl;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,10 +12,6 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldNameConstants;
 import lombok.experimental.SuperBuilder;
 import org.cainiao.authorization.entity.IdBaseEntity;
-import org.nutz.dao.entity.annotation.ColDefine;
-import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Comment;
-import org.nutz.dao.entity.annotation.Table;
 
 import java.io.Serial;
 
@@ -29,30 +27,23 @@ import java.io.Serial;
 @FieldNameConstants
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@Table("t_role_permission")
-@Comment("角色权限")
+@Table(name = "t_role_permission")
 @Schema(name = "RolePermission", description = "角色权限")
 public class RolePermission extends IdBaseEntity {
 
     @Serial
     private static final long serialVersionUID = 5773966477520484679L;
 
+    @Column(name = "rp_role_key", length = 32)
     @Schema(description = "角色key", requiredMode = RequiredMode.REQUIRED)
-    @Column("rp_role_key")
-    @Comment("角色key")
-    @ColDefine(width = 32, precision = 0)
     private String roleKey;
 
+    @Column(name = "rp_permission_key_path", length = 200)
     @Schema(description = "权限keyPath", requiredMode = RequiredMode.REQUIRED)
-    @Column("rp_permission_key_path")
-    @Comment("权限keyPath")
-    @ColDefine(width = 200, precision = 0)
     private String permissionKeyPath;
 
+    @Column(name = "client_id", length = 32)
     @Schema(description = "客户端(应用)id", requiredMode = RequiredMode.REQUIRED)
-    @Column("client_id")
-    @Comment("客户端(应用)id")
-    @ColDefine(width = 32, precision = 0)
     private String clientId;
 
 }
