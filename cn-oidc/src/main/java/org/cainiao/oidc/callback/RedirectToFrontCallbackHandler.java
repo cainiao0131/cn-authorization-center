@@ -3,7 +3,7 @@ package org.cainiao.oidc.callback;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.cainiao.common.util.exception.BusinessException;
+import org.cainiao.common.exception.BusinessException;
 
 import java.io.IOException;
 

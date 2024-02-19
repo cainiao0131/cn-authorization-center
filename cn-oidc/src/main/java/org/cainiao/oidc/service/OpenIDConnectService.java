@@ -3,7 +3,7 @@ package org.cainiao.oidc.service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.cainiao.auth.AuthUser;
-import org.cainiao.common.util.exception.BusinessException;
+import org.cainiao.common.exception.BusinessException;
 import org.cainiao.oidc.config.webclient.WebClientService;
 import org.cainiao.oidc.domain.OpenIDConnectClient;
 import org.cainiao.oidc.domain.Token;

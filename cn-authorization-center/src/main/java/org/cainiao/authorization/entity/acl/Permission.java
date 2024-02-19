@@ -1,6 +1,5 @@
 package org.cainiao.authorization.entity.acl;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
@@ -11,9 +10,9 @@ import lombok.Builder.Default;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldNameConstants;
 import lombok.experimental.SuperBuilder;
-import org.cainiao.authorization.entity.IdBaseEntity;
-import org.cainiao.common.util.constant.Codebook;
-import org.cainiao.common.util.constant.ICodeBook;
+import org.cainiao.common.constant.Codebook;
+import org.cainiao.common.constant.ICodeBook;
+import org.cainiao.common.entity.IdBaseEntity;
 
 import java.io.Serial;
 
@@ -81,9 +80,7 @@ public class Permission extends IdBaseEntity {
          */
         OTHER("other", "其他页面元素");
 
-        @EnumValue
-        final
-        String code;
+        final String code;
         final String description;
     }
 

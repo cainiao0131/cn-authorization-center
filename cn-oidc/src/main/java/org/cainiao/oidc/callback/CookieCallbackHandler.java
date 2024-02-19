@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.cainiao.auth.AuthUser;
 import org.cainiao.auth.jwt.JWTGenerator;
+import org.cainiao.common.exception.BusinessException;
 import org.cainiao.common.util.JsonUtil;
-import org.cainiao.common.util.exception.BusinessException;
 import org.cainiao.oidc.service.OpenIDConnectService;
 
 import java.io.IOException;

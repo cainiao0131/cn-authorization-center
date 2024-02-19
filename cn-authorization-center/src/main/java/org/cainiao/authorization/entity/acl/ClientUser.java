@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldNameConstants;
 import lombok.experimental.SuperBuilder;
-import org.cainiao.authorization.entity.IdBaseEntity;
+import org.cainiao.common.entity.IdBaseEntity;
 
 import java.io.Serial;
 

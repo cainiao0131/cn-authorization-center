@@ -11,8 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-import org.cainiao.common.util.constant.Codebook;
-import org.cainiao.common.util.constant.ICodeBook;
+import org.cainiao.common.constant.Codebook;
+import org.cainiao.common.constant.ICodeBook;
 
 import java.util.HashMap;
 import java.util.List;

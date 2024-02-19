@@ -34,11 +34,13 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 50MB
+
 logging:
   file:
     name: ${user.home}/logs/${spring.application.name}.log
     path: ${user.home}/logs
   level:
+    org.springframework.security: trace
     "[cn.cainiao]": debug
     "[org.apache.logging]": off
     "[io.swagger]": off

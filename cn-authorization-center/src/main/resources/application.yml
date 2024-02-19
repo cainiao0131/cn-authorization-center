@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 9000
 
 spring:
   datasource:
@@ -9,19 +9,19 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     druid:
-      db-type: mysql
+      db-type: postgresql
       filters: stat,wall,log4j2
       initial-size: 10
-      min-idle:  1
-      max-active:  50
-      max-wait:  60000
-      time-between-eviction-runs-millis:  60000
-      min-evictable-idle-time-millis:  300000
-      validation-query:  SELECT 'ezalor'
-      test-while-idle:  true
-      test-on-borrow:  true
-      test-on-return:  false
-      pool-prepared-statements:  true
+      min-idle: 1
+      max-active: 50
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 'ezalor'
+      test-while-idle: true
+      test-on-borrow: true
+      test-on-return: false
+      pool-prepared-statements: true
       max-pool-prepared-statement-per-connection-size: 20
       web-stat-filter:
         enabled: true
@@ -31,6 +31,9 @@ spring:
         enabled: true
         url-pattern: /druid/*
         reset-enable: true
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.log4j2.Log4j2Impl

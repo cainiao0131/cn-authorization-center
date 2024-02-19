@@ -10,7 +10,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.cainiao.auth.AuthUser;
 import org.cainiao.auth.jwt.JWTGenerator;
 import org.cainiao.auth.service.AbstractAuthService;
-import org.cainiao.common.util.exception.BusinessException;
+import org.cainiao.common.exception.BusinessException;
 
 import java.util.HashMap;
 import java.util.List;
