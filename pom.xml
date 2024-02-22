@@ -9,11 +9,16 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>authorization-center</artifactId>
-	<name>authorization-center</name>
+	<artifactId>cn-authorization-center</artifactId>
+	<name>cn-authorization-center</name>
 	<description>Authorization Center</description>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.cainiao.oauth2.client</groupId>
+			<artifactId>cn-oauth2-client-core</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.cainiao</groupId>
 			<artifactId>cn-api-lark</artifactId>
