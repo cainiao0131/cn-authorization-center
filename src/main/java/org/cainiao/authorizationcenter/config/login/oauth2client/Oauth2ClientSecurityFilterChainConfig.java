@@ -5,7 +5,7 @@ import org.cainiao.authorizationcenter.config.login.oauth2client.httpclient.lark
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.DynamicAuthorizationCodeTokenResponseClient;
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.lark.LarkOAuth2AuthorizationCodeGrantRequestEntityConverter;
 import org.cainiao.authorizationcenter.config.login.oauth2client.userinfoendpoint.DynamicOAuth2UserService;
-import org.cainiao.authorizationcenter.dao.repository.CustomJpaClientRegistrationRepository;
+import org.cainiao.oauth2.client.core.dao.repository.JpaClientRegistrationRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -78,9 +78,9 @@ public class Oauth2ClientSecurityFilterChainConfig {
      */
     @Bean
     ClientRegistrationRepository clientRegistrationRepository(
-        CustomJpaClientRegistrationRepository customJpaClientRegistrationRepository)
+        JpaClientRegistrationRepository jpaClientRegistrationRepository)
     {
-        return new DaoClientRegistrationRepository(customJpaClientRegistrationRepository);
+        return new DaoClientRegistrationRepository(jpaClientRegistrationRepository);
     }
 
     private OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver(

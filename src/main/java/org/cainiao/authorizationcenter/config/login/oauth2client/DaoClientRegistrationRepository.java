@@ -1,7 +1,7 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client;
 
 import lombok.RequiredArgsConstructor;
-import org.cainiao.authorizationcenter.dao.repository.CustomJpaClientRegistrationRepository;
+import org.cainiao.oauth2.client.core.dao.repository.JpaClientRegistrationRepository;
 import org.cainiao.oauth2.client.core.entity.JpaClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -17,12 +17,12 @@ import java.util.Iterator;
 @RequiredArgsConstructor
 public class DaoClientRegistrationRepository implements ClientRegistrationRepository, Iterable<ClientRegistration> {
 
-    private final CustomJpaClientRegistrationRepository customJpaClientRegistrationRepository;
+    private final JpaClientRegistrationRepository jpaClientRegistrationRepository;
 
     @Override
     public ClientRegistration findByRegistrationId(String registrationId) {
         Assert.hasText(registrationId, "registrationId cannot be empty");
-        return customJpaClientRegistrationRepository.findByRegistrationId(registrationId)
+        return jpaClientRegistrationRepository.findByRegistrationId(registrationId)
             .map(JpaClientRegistration::toRegisteredClient).orElse(null);
     }
 
@@ -32,7 +32,7 @@ public class DaoClientRegistrationRepository implements ClientRegistrationReposi
      */
     @Override
     public Iterator<ClientRegistration> iterator() {
-        return customJpaClientRegistrationRepository.findAll().stream()
+        return jpaClientRegistrationRepository.findAll().stream()
             .map(JpaClientRegistration::toRegisteredClient).iterator();
     }
 }
