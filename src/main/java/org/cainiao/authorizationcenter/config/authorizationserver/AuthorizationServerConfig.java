@@ -12,7 +12,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
@@ -37,10 +36,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
  */
 @Configuration
 public class AuthorizationServerConfig {
-
-    private static final String[] DEFAULT_SCOPES = {OidcScopes.OPENID, OidcScopes.PROFILE, OidcScopes.EMAIL};
-    // TODO 应该从【后端应用】的 API 权限配置中查询
-    private static final String[] DYNAMIC_SCOPES = {"lark", "gitee"};
 
     /**
      * 如果没有 SecurityFilterChain @Bean
