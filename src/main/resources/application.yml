@@ -92,6 +92,19 @@ cn:
     login-success: abc
     su-token: abc
 
+management:
+  info:
+    git:
+      mode: full
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "*"
+
 springdoc:
   customer:
     theme: feeling-blue
