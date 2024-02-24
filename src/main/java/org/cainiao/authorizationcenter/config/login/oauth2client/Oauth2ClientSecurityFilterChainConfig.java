@@ -6,6 +6,9 @@ import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.D
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.lark.LarkOAuth2AuthorizationCodeGrantRequestEntityConverter;
 import org.cainiao.authorizationcenter.config.login.oauth2client.userinfoendpoint.DynamicOAuth2UserService;
 import org.cainiao.oauth2.client.core.dao.repository.JpaClientRegistrationRepository;
+import org.cainiao.oauth2.client.core.filter.ForceHttpsPortAndSchemeFilter;
+import org.cainiao.oauth2.client.core.properties.CNOAuth2ClientProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -23,6 +26,7 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequest
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,15 +44,17 @@ import static org.springframework.security.config.Customizer.withDefaults;
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
 @Configuration
+@EnableConfigurationProperties(CNOAuth2ClientProperties.class)
 public class Oauth2ClientSecurityFilterChainConfig {
 
     public static final String LARK_REGISTRATION_ID = "cn-lark-client";
 
     @Bean
     @Order(1)
-    SecurityFilterChain oauth2SecurityFilterChain(
-        HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository, LarkApi larkApi) throws Exception
-    {
+    SecurityFilterChain oauth2SecurityFilterChain(HttpSecurity http,
+                                                  ClientRegistrationRepository clientRegistrationRepository,
+                                                  LarkApi larkApi,
+                                                  CNOAuth2ClientProperties properties) throws Exception {
         RestOperations larkRestTemplate = getLarkRestOperations();
 
         http.authorizeHttpRequests(authorizeHttpRequestsConfigurer -> authorizeHttpRequestsConfigurer
@@ -67,6 +73,9 @@ public class Oauth2ClientSecurityFilterChainConfig {
                     .userService(new DynamicOAuth2UserService()
                         .registerRestOperations(LARK_REGISTRATION_ID, larkRestTemplate))))
             .oauth2Client(withDefaults());
+        if (properties.isForceHttps()) {
+            http.addFilterBefore(new ForceHttpsPortAndSchemeFilter(), SecurityContextHolderFilter.class);
+        }
         return http.build();
     }
 
