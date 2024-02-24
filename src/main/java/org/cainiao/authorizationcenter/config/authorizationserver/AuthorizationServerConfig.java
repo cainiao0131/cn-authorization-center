@@ -125,7 +125,7 @@ public class AuthorizationServerConfig {
              * 这里虽然不配置 issuer 也会以请求时的域名为准，这样更灵活，可以兼容域名变化的情况
              * 但是，如果 TLS 终止是在更外层完成的，那么应用收到的是 HTTP 请求，这会导致自动生成的域名为 HTTP，导致问题
              */
-            .issuer("https://registry.mcainiaom.top")
+            .issuer("https://auth.mcainiaom.top")
             .build();
     }
 
