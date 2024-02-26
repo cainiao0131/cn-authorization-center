@@ -57,12 +57,12 @@ spec:
               configMapKeyRef:
                 name: cn-authorization-center-config
                 key: db_port
-          - name: DB_PORT
+          - name: DB_USERNAME
             valueFrom:
               secretKeyRef:
                 name: cn-pgsql-secret
                 key: db_username
-          - name: DB_PORT
+          - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: cn-pgsql-secret
