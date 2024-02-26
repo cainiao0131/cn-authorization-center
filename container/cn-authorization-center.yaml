@@ -22,8 +22,8 @@ metadata:
   namespace: cai-niao
   name: cn-authorization-center-config
 data:
-  DB_HOST: postgresql-16-1.cai-niao.svc.cluster.local
-  DB_PORT: "5432"
+  db_host: postgresql-16-1.cai-niao.svc.cluster.local
+  db_port: "5432"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -46,8 +46,24 @@ spec:
         ports:
         - name: http
           containerPort: 9000
-        envFrom:
-        - configMapRef:
-          name: cn-authorization-center-config
-        - secretRef:
-          name: cn-pgsql-secret
+        env:
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: cn-authorization-center-config
+                key: db_host
+          - name: DB_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: cn-authorization-center-config
+                key: db_port
+          - name: DB_PORT
+            valueFrom:
+              secretKeyRef:
+                name: cn-pgsql-secret
+                key: db_username
+          - name: DB_PORT
+            valueFrom:
+              secretKeyRef:
+                name: cn-pgsql-secret
+                key: db_password
