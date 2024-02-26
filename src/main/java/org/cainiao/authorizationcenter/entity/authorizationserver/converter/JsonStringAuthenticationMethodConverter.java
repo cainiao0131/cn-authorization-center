@@ -1,4 +1,4 @@
-package org.cainiao.authorizationcenter.entity.converter;
+package org.cainiao.authorizationcenter.entity.authorizationserver.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

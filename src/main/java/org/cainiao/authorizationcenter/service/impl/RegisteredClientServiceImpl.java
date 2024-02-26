@@ -2,7 +2,7 @@ package org.cainiao.authorizationcenter.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.cainiao.authorizationcenter.dao.repository.JpaRegisteredClientRepository;
-import org.cainiao.authorizationcenter.entity.JpaRegisteredClient;
+import org.cainiao.authorizationcenter.entity.authorizationserver.JpaRegisteredClient;
 import org.cainiao.authorizationcenter.service.RegisteredClientService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.stereotype.Service;

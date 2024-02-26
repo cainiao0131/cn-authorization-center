@@ -1,6 +1,6 @@
 package org.cainiao.authorizationcenter.service;
 
-import org.cainiao.authorizationcenter.entity.JpaRegisteredClient;
+import org.cainiao.authorizationcenter.entity.authorizationserver.JpaRegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 
 /**

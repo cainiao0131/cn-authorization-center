@@ -1,4 +1,4 @@
-package org.cainiao.authorizationcenter.entity;
+package org.cainiao.authorizationcenter.entity.authorizationserver;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -7,10 +7,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.cainiao.authorizationcenter.entity.converter.JsonStringAuthorizationGrantTypeSetConverter;
-import org.cainiao.authorizationcenter.entity.converter.JsonStringClientAuthenticationMethodSetConverter;
-import org.cainiao.authorizationcenter.entity.converter.JsonStringClientSettingsConverter;
-import org.cainiao.authorizationcenter.entity.converter.JsonStringTokenSettingsConverter;
+import org.cainiao.authorizationcenter.entity.authorizationserver.converter.JsonStringAuthorizationGrantTypeSetConverter;
+import org.cainiao.authorizationcenter.entity.authorizationserver.converter.JsonStringClientAuthenticationMethodSetConverter;
+import org.cainiao.authorizationcenter.entity.authorizationserver.converter.JsonStringClientSettingsConverter;
+import org.cainiao.authorizationcenter.entity.authorizationserver.converter.JsonStringTokenSettingsConverter;
 import org.cainiao.common.dao.converter.JsonStringSetConverter;
 import org.cainiao.common.entity.IdBaseEntity;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;

@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,6 +37,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.cainiao.authorizationcenter.config.FilterChainOrder.OAUTH2_CLIENT_LOGIN_PRECEDENCE;
+import static org.cainiao.authorizationcenter.config.resourceserver.ResourceServerConfig.RESOURCE_SERVER_REQUEST_MATCHER;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 /**
@@ -50,14 +53,15 @@ public class Oauth2ClientSecurityFilterChainConfig {
     public static final String LARK_REGISTRATION_ID = "cn-lark-client";
 
     @Bean
-    @Order(1)
-    SecurityFilterChain oauth2SecurityFilterChain(HttpSecurity http,
+    @Order(OAUTH2_CLIENT_LOGIN_PRECEDENCE)
+    SecurityFilterChain oauth2ClientLoginFilterChain(HttpSecurity http,
                                                   ClientRegistrationRepository clientRegistrationRepository,
                                                   LarkApi larkApi,
                                                   CNOAuth2ClientProperties properties) throws Exception {
         RestOperations larkRestTemplate = getLarkRestOperations();
 
-        http.authorizeHttpRequests(authorizeHttpRequestsConfigurer -> authorizeHttpRequestsConfigurer
+        http.securityMatcher(new NegatedRequestMatcher(RESOURCE_SERVER_REQUEST_MATCHER))
+            .authorizeHttpRequests(authorizeHttpRequestsConfigurer -> authorizeHttpRequestsConfigurer
                 .anyRequest().authenticated())
             .oauth2Login(oAuth2LoginConfigurer -> oAuth2LoginConfigurer
                 .authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig

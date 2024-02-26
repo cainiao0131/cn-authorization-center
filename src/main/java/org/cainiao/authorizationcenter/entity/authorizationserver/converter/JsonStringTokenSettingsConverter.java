@@ -1,11 +1,11 @@
-package org.cainiao.authorizationcenter.entity.converter;
+package org.cainiao.authorizationcenter.entity.authorizationserver.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -19,37 +19,37 @@ import java.util.Map;
  */
 @Component
 @RequiredArgsConstructor
-public class JsonStringClientSettingsConverter
-    implements AttributeConverter<ClientSettings, String>
+public class JsonStringTokenSettingsConverter
+    implements AttributeConverter<TokenSettings, String>
 {
 
     private final ObjectMapper objectMapper;
 
     @Override
-    public String convertToDatabaseColumn(ClientSettings attribute) {
+    public String convertToDatabaseColumn(TokenSettings attribute) {
         if (attribute == null) {
             return null;
         }
         try {
             return objectMapper.writeValueAsString(attribute.getSettings());
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error converting ClientSettings to JSON string", e);
+            throw new RuntimeException("Error converting TokenSettings to JSON string", e);
         }
     }
 
     @Override
-    public ClientSettings convertToEntityAttribute(String dbData) {
+    public TokenSettings convertToEntityAttribute(String dbData) {
         if (!StringUtils.hasText(dbData)) {
-            return ClientSettings.builder().build();
+            return TokenSettings.builder().build();
         }
         try {
             Map<String, Object> settings = objectMapper.readValue(dbData, new TypeReference<>() {});
             if (settings.isEmpty()) {
-                return ClientSettings.builder().build();
+                return TokenSettings.builder().build();
             }
-            return ClientSettings.withSettings(settings).build();
+            return TokenSettings.withSettings(settings).build();
         } catch (IOException e) {
-            throw new RuntimeException("Error converting JSON string to ClientSettings", e);
+            throw new RuntimeException("Error converting JSON string to TokenSettings", e);
         }
     }
 }

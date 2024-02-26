@@ -8,7 +8,6 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.cainiao.authorizationcenter.service.RegisteredClientService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,6 +27,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.cainiao.authorizationcenter.config.FilterChainOrder.AUTHORIZATION_SERVER_PRECEDENCE;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 /**
@@ -43,8 +43,8 @@ public class AuthorizationServerConfig {
      * 会自动配置一个优先级为 @Order(Ordered.HIGHEST_PRECEDENCE) 的 SecurityFilterChain
      */
     @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+    @Order(AUTHORIZATION_SERVER_PRECEDENCE)
+    SecurityFilterChain authorizationServerFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
             // 启用 OpenID Connect 1.0

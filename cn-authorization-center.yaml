@@ -13,8 +13,17 @@ spec:
     app.kubernetes.io/name: cn-authorization-center
   ports:
     - name: http
-      port: 8080
+      port: 9000
       targetPort: http
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: cai-niao
+  name: cn-authorization-center-config
+data:
+  DB_HOST: postgresql-16-1.cai-niao.svc.cluster.local
+  DB_PORT: "5432"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -32,29 +41,13 @@ spec:
         app.kubernetes.io/name: cn-authorization-center
     spec:
       containers:
-        - name: cn-authorization-center
-          image: registry.mcainiaom.top/cn-authorization-center:1.0.0
-          ports:
-            - name: http
-              containerPort: 8080
-          env:
-            - name: DB_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: cn-authorization-center-config
-                  key: db-host
-            - name: DB_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: cn-authorization-center-config
-                  key: db-port
-            - name: DB_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: cn-authorization-center-secrets
-                  key: db-username
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: cn-authorization-center-secrets
-                  key: db-password
+      - name: cn-authorization-center
+        image: registry.mcainiaom.top/cn-authorization-center:1.0.0
+        ports:
+        - name: http
+          containerPort: 9000
+        envFrom:
+        - configMapRef:
+          name: cn-authorization-center-config
+        - secretRef:
+          name: cn-pgsql-secret

@@ -1,6 +1,6 @@
 package org.cainiao.authorizationcenter.dao.repository;
 
-import org.cainiao.authorizationcenter.entity.JpaRegisteredClient;
+import org.cainiao.authorizationcenter.entity.authorizationserver.JpaRegisteredClient;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
