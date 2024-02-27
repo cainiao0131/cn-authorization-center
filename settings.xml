@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+
+  <servers>
+    <server>
+        <id>${env.MY_MAVEN_SERVER_ID}</id>
+        <username>${env.MY_MAVEN_USERNAME}</username>
+        <password>${env.MY_MAVEN_PASSWORD}</password>
+    </server>
+  </servers>
+
+  <mirrors>
+    <mirror>
+        <id>nexus-tencentyun</id>
+        <!-- 此配置避免了本仓库制品的拉取流量被切换到腾讯云镜像源，保证您在使用镜像加速的同时可以从本仓库拉取制品 -->
+        <mirrorOf>!${env.MY_MAVEN_SERVER_ID}</mirrorOf>
+        <name>Nexus tencentyun</name>
+        <url>${env.MY_MAVEN_MIRROR_URL}</url>
+    </mirror>
+  </mirrors>
+
+  <profiles>
+    <profile>
+      <id>Repository Proxy</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>${env.MY_MAVEN_SERVER_ID}</id>
+          <name>maven</name>
+          <url>${env.MY_MAVEN_REPOSITORY_URL}</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+</settings>
