@@ -47,23 +47,25 @@ spec:
         - name: http
           containerPort: 9000
         env:
-          - name: DB_HOST
-            valueFrom:
-              configMapKeyRef:
-                name: cn-authorization-center-config
-                key: db_host
-          - name: DB_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: cn-authorization-center-config
-                key: db_port
-          - name: DB_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: cn-pgsql-secret
-                key: db_username
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: cn-pgsql-secret
-                key: db_password
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: cn-authorization-center-config
+              key: db_host
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: cn-authorization-center-config
+              key: db_port
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: cn-pgsql-secret
+              key: db_username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cn-pgsql-secret
+              key: db_password
+      imagePullSecrets:
+      - name: reg-cred-tencent
