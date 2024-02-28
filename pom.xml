@@ -10,6 +10,7 @@
 	</parent>
 
 	<artifactId>cn-authorization-center</artifactId>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>cn-authorization-center</name>
 	<description>Authorization Center</description>
 
