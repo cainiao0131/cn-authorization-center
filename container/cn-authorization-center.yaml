@@ -42,7 +42,7 @@ spec:
     spec:
       containers:
       - name: cn-authorization-center
-        image: g-ziod8129-docker.pkg.coding.net/mysterious-forest/docker/cn-authorization-center:0.0.1-SNAPSHOT
+        image: g-ziod8129-docker.pkg.coding.net/mysterious-forest/docker/cn-authorization-center:0.0.2-SNAPSHOT
         ports:
         - name: http
           containerPort: 9000
