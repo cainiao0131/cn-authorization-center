@@ -16,6 +16,7 @@ public class JsonConfig {
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
+        // TODO 有时间进一步测试，JavaTimeModule 好像没生效
         objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
     }
