@@ -9,7 +9,6 @@ import org.cainiao.authorizationcenter.dao.repository.UIModuleRepository;
 import org.cainiao.authorizationcenter.dto.UiModuleUrl;
 import org.cainiao.authorizationcenter.entity.acl.Application;
 import org.cainiao.authorizationcenter.entity.acl.UIModule;
-import org.cainiao.common.exception.BusinessException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,16 +38,16 @@ public class UIModuleController {
     {
         Optional<UIModule> uiModuleOptional = uiModuleRepository.findById(id);
         if (uiModuleOptional.isEmpty()) {
-            throw new BusinessException("未找到UI模块");
+            return null;
         }
         UIModule uiModule = uiModuleOptional.get();
         String applicationId = uiModule.getApplicationId();
         if (!StringUtils.hasText(applicationId)) {
-            throw new BusinessException("无效的应用ID");
+            return null;
         }
         Optional<Application> applicationOptional = applicationRepository.findById(applicationId);
         if (applicationOptional.isEmpty()) {
-            throw new BusinessException("未找到应用");
+            return null;
         }
         Application application = applicationOptional.get();
         return UiModuleUrl.builder().serviceName(fixString(application.getServiceName()))
