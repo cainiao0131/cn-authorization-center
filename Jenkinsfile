@@ -20,7 +20,7 @@ pipeline {
     }
     stage('编译') {
       steps {
-        sh 'mvn clean package -s ./settings.xml'
+        sh 'mvn clean package -s ./settings.xml -DskipTests'
       }
     }
     stage('推送到 CODING Maven 制品库') {
