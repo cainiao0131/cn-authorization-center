@@ -24,7 +24,9 @@ public class ResourceServerConfig {
     @Bean
     @Order(RESOURCE_SERVER_PRECEDENCE)
     SecurityFilterChain resourceServerFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher(RESOURCE_SERVER_REQUEST_MATCHER)
+        http
+            // 只会对 securityMatcher() 匹配的请求应用这个 SecurityFilterChain
+            .securityMatcher(RESOURCE_SERVER_REQUEST_MATCHER)
             .authorizeHttpRequests(authorizeHttpRequestsConfigurer ->
                 // TODO 暂时都放开，后期根据不同的资源类型配置不同的规则
                 authorizeHttpRequestsConfigurer.anyRequest().permitAll())

@@ -21,7 +21,9 @@ public class AuthenticationConfig {
     @Bean
     @Order(FORM_LOGIN_PRECEDENCE)
     SecurityFilterChain formLoginFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher(new NegatedRequestMatcher(RESOURCE_SERVER_REQUEST_MATCHER))
+        http
+            // 只会对 securityMatcher() 匹配的请求应用这个 SecurityFilterChain
+            .securityMatcher(new NegatedRequestMatcher(RESOURCE_SERVER_REQUEST_MATCHER))
             .authorizeHttpRequests(authorizeHttpRequestsConfigurer -> authorizeHttpRequestsConfigurer
                 .anyRequest().authenticated())
             // 处理从授权服务器 Filter Chain 到登录页的重定向的表单登录

@@ -2,10 +2,7 @@ package org.cainiao.authorizationcenter.config.thirdpartyapi;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.cainiao.api.lark.LarkApi;
-import org.cainiao.api.lark.impl.LarkApiImpl;
-import org.cainiao.api.lark.impl.authenticateandauthorize.getaccesstokens.CacheableGetAccessTokens;
-import org.cainiao.api.lark.impl.authenticateandauthorize.getaccesstokens.RestTemplateGetAccessTokens;
-import org.cainiao.api.lark.impl.service.RestTemplateService;
+import org.cainiao.api.lark.impl.BaseLarkApi;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -25,29 +22,12 @@ public class LarkApiConfig {
     /**
      * 默认自动配置一个有缓存的飞书 API
      *
-     * @param cacheableGetAccessTokens 有缓存的 GetAccessTokens
+     * @param restTemplate RestTemplate
      * @return 有缓存的飞书 API
      */
     @Bean
-    public LarkApi larkApi(CacheableGetAccessTokens cacheableGetAccessTokens) {
-        return new LarkApiImpl(cacheableGetAccessTokens);
-    }
-
-    /**
-     * 为了让 @Cacheable 的 AOP 生效，CacheableGetAccessTokens 必须是 @Bean<br />
-     * 由于是自动配置的一部分，不要基于组件扫描，即不要用 @Component 这类基于自动扫描的注解，详见 Spring AutoConfiguration 官网
-     *
-     * @param restTemplateService RestTemplateService
-     * @return CacheableGetAccessTokens
-     */
-    @Bean
-    public CacheableGetAccessTokens cacheableRestTemplateGetAccessTokens(RestTemplateService restTemplateService) {
-        return new CacheableGetAccessTokens(new RestTemplateGetAccessTokens(restTemplateService));
-    }
-
-    @Bean
-    public RestTemplateService restTemplateService(RestTemplate restTemplate) {
-        return new RestTemplateService(restTemplate);
+    public LarkApi larkApi(RestTemplate restTemplate) {
+        return new BaseLarkApi(restTemplate, "https://open.feishu.cn/open-apis/auth/v3");
     }
 
     @Bean
@@ -65,5 +45,4 @@ public class LarkApiConfig {
             .newBuilder().expireAfterWrite(119, TimeUnit.MINUTES).build());
         return caffeineCacheManager;
     }
-
 }

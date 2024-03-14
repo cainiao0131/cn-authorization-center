@@ -60,7 +60,9 @@ public class Oauth2ClientSecurityFilterChainConfig {
                                                   CNOAuth2ClientProperties properties) throws Exception {
         RestOperations larkRestTemplate = getLarkRestOperations();
 
-        http.securityMatcher(new NegatedRequestMatcher(RESOURCE_SERVER_REQUEST_MATCHER))
+        http
+            // 只会对 securityMatcher() 匹配的请求应用这个 SecurityFilterChain
+            .securityMatcher(new NegatedRequestMatcher(RESOURCE_SERVER_REQUEST_MATCHER))
             .authorizeHttpRequests(authorizeHttpRequestsConfigurer -> authorizeHttpRequestsConfigurer
                 .anyRequest().authenticated())
             .oauth2Login(oAuth2LoginConfigurer -> oAuth2LoginConfigurer
