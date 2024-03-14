@@ -10,7 +10,9 @@ import java.util.Optional;
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
-public interface JpaRegisteredClientRepository extends JpaRepository<JpaRegisteredClient, String> {
+public interface JpaRegisteredClientRepository extends JpaRepository<JpaRegisteredClient, Long> {
+
+    Optional<JpaRegisteredClient> findByRegisteredClientId(String registeredClientId);
 
     Optional<JpaRegisteredClient> findByClientId(String clientId);
 

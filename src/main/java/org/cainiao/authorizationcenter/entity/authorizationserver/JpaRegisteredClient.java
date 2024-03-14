@@ -41,6 +41,12 @@ public class JpaRegisteredClient extends IdBaseEntity {
     @Serial
     private static final long serialVersionUID = -1465601057374081364L;
 
+    /**
+     * RegisteredClient 的 ID，与数据库 ID 主键重名了，用这个字段保存
+     */
+    @Column(nullable = false)
+    private String registeredClientId;
+
     @Column(nullable = false)
     private String clientId;
 
@@ -79,7 +85,7 @@ public class JpaRegisteredClient extends IdBaseEntity {
 
     public static JpaRegisteredClient from(RegisteredClient registeredClient) {
         return JpaRegisteredClient.builder()
-            .id(registeredClient.getId())
+            .registeredClientId(registeredClient.getId())
             .clientId(registeredClient.getClientId())
             .clientIdIssuedAt(registeredClient.getClientIdIssuedAt())
             .clientSecret(registeredClient.getClientSecret())
@@ -96,7 +102,7 @@ public class JpaRegisteredClient extends IdBaseEntity {
     }
 
     public RegisteredClient toRegisteredClient() {
-        RegisteredClient.Builder builder = RegisteredClient.withId(getId());
+        RegisteredClient.Builder builder = RegisteredClient.withId(getRegisteredClientId());
         builder.clientId(getClientId());
         builder.clientIdIssuedAt(getClientIdIssuedAt());
         builder.clientSecret(getClientSecret());

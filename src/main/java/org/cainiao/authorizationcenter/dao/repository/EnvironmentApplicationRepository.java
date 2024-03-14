@@ -1,6 +1,6 @@
 package org.cainiao.authorizationcenter.dao.repository;
 
-import org.cainiao.authorizationcenter.entity.acl.Application;
+import org.cainiao.authorizationcenter.entity.acl.EnvironmentApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
-public interface ApplicationRepository extends JpaRepository<Application, Long> {
+public interface EnvironmentApplicationRepository extends JpaRepository<EnvironmentApplication, Long> {
 
 }

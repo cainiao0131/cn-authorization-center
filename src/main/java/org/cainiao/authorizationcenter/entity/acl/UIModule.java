@@ -28,13 +28,13 @@ public class UIModule extends IdBaseEntity {
      * 父UI模块ID
      */
     @Column(name = "um_parent_id")
-    private String parentId;
+    private long parentId;
 
     /**
-     * 所属应用ID
+     * 环境应用 ID
      */
-    @Column(name = "um_application_id", nullable = false)
-    private String applicationId;
+    @Column(name = "um_environment_application_id", nullable = false)
+    private long environmentApplicationId;
 
     /**
      * UI模块名称
@@ -43,7 +43,7 @@ public class UIModule extends IdBaseEntity {
     private String name;
 
     /**
-     * UI模块对应的前端URI
+     * UI模块对应的前端 URI
      */
     @Column(name = "um_uri")
     private String uri;

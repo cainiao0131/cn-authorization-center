@@ -11,29 +11,29 @@ import org.cainiao.common.entity.IdBaseEntity;
 import java.io.Serial;
 
 /**
- * TODO 考虑创建一个授权中心的库，将部分 OAuth2 Client 不用的类移过去<br />
+ * 环境，如开发环境、生产环境<br />
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
-@Entity(name = "t_application")
+@Entity(name = "t_environment")
 @NoArgsConstructor
 @SuperBuilder
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Application extends IdBaseEntity {
+public class Environment extends IdBaseEntity {
 
     @Serial
-    private static final long serialVersionUID = -4505057660743337320L;
+    private static final long serialVersionUID = -3684582002496716430L;
 
     /**
-     * 所属系统ID
+     * 环境名称，英文简称，见名知意，会用于拼接某些规范名称
      */
-    @Column(name = "app_system_id", nullable = false)
-    private long systemId;
-
-    /**
-     * 应用名称
-     */
-    @Column(name = "app_name", nullable = false, unique = true)
+    @Column(name = "env_name", nullable = false, unique = true)
     private String name;
+
+    /**
+     * 环境描述
+     */
+    @Column(name = "env_description", nullable = false, unique = true)
+    private String description;
 }

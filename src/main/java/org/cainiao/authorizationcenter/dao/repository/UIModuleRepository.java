@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
-public interface UIModuleRepository extends JpaRepository<UIModule, String> {
+public interface UIModuleRepository extends JpaRepository<UIModule, Long> {
 
 }

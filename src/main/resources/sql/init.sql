@@ -5,7 +5,8 @@
 -- DROP TABLE public.oauth2_registered_client;
 
 CREATE TABLE public.oauth2_registered_client (
-	id varchar(100) NOT NULL,
+	id bigint NOT NULL,
+	registered_client_id varchar(100) NOT NULL, -- RegisteredClient 的 ID，由于与数据库主键重名，因此存于这个字段
 	client_id varchar(100) NOT NULL,
 	client_id_issued_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	client_secret varchar(200) DEFAULT NULL::character varying NULL,
@@ -33,7 +34,7 @@ CREATE TABLE public.oauth2_registered_client (
 -- DROP TABLE public.oauth2_client_registration;
 
 CREATE TABLE oauth2_client_registration (
-	id varchar(100) NOT NULL,
+	id bigint NOT NULL,
 	registration_id varchar(100) NOT NULL,
 	client_id varchar(100) NOT NULL,
 	client_secret varchar(200) DEFAULT NULL::character varying NULL,
@@ -66,7 +67,7 @@ CREATE TABLE oauth2_client_registration (
 -- DROP TABLE public.t_system;
 
 CREATE TABLE public.t_system (
-	id varchar(100) NOT NULL,
+	id bigint NOT NULL,
     s_name varchar(100) NOT NULL,
 	created_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	updated_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -83,8 +84,8 @@ CREATE TABLE public.t_system (
 -- DROP TABLE public.t_application;
 
 CREATE TABLE public.t_application (
-	id varchar(100) NOT NULL,
-    a_system_id varchar(100) NOT NULL,
+	id bigint NOT NULL,
+    a_system_id bigint NOT NULL,
     a_name varchar(100) NOT NULL,
     a_service_name varchar(100) DEFAULT NULL::character varying NULL,
     a_service_uri varchar(100) DEFAULT NULL::character varying NULL,
@@ -103,9 +104,9 @@ CREATE TABLE public.t_application (
 -- DROP TABLE public.t_ui_module;
 
 CREATE TABLE public.t_ui_module (
-	id varchar(100) NOT NULL,
-    um_parent_id varchar(100) DEFAULT NULL::character varying NULL,
-    um_application_id varchar(100) NOT NULL,
+	id bigint NOT NULL,
+    um_parent_id bigint DEFAULT NULL::bigint NULL,
+    um_environment_application_id bigint NOT NULL,
     um_name varchar(100) NOT NULL,
     um_uri varchar(200) DEFAULT NULL::character varying NULL,
 	created_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,

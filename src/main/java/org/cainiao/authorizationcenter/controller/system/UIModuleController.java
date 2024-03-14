@@ -4,10 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.cainiao.authorizationcenter.dao.repository.ApplicationRepository;
+import org.cainiao.authorizationcenter.dao.repository.EnvironmentApplicationRepository;
 import org.cainiao.authorizationcenter.dao.repository.UIModuleRepository;
 import org.cainiao.authorizationcenter.dto.UiModuleUrl;
-import org.cainiao.authorizationcenter.entity.acl.Application;
+import org.cainiao.authorizationcenter.entity.acl.EnvironmentApplication;
 import org.cainiao.authorizationcenter.entity.acl.UIModule;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,29 +29,26 @@ import java.util.Optional;
 public class UIModuleController {
 
     private final UIModuleRepository uiModuleRepository;
-    private final ApplicationRepository applicationRepository;
+    private final EnvironmentApplicationRepository environmentApplicationRepository;
 
     @GetMapping("ui-module/{id}/url")
     @Operation(summary = "文章管理分页查询文章")
     public UiModuleUrl uiModuleUrl(
-        @Parameter(description = "UI模块ID", required = true) @PathVariable("id") String id)
+        @Parameter(description = "UI模块ID", required = true) @PathVariable("id") long id)
     {
         Optional<UIModule> uiModuleOptional = uiModuleRepository.findById(id);
         if (uiModuleOptional.isEmpty()) {
             return null;
         }
         UIModule uiModule = uiModuleOptional.get();
-        String applicationId = uiModule.getApplicationId();
-        if (!StringUtils.hasText(applicationId)) {
+        Optional<EnvironmentApplication> environmentApplicationOptional = environmentApplicationRepository
+            .findById(uiModule.getEnvironmentApplicationId());
+        if (environmentApplicationOptional.isEmpty()) {
             return null;
         }
-        Optional<Application> applicationOptional = applicationRepository.findById(applicationId);
-        if (applicationOptional.isEmpty()) {
-            return null;
-        }
-        Application application = applicationOptional.get();
-        return UiModuleUrl.builder().serviceName(fixString(application.getServiceName()))
-            .uri(String.format("%s%s", fixString(application.getServiceUri()), fixString(uiModule.getUri())))
+        EnvironmentApplication environmentApplication = environmentApplicationOptional.get();
+        return UiModuleUrl.builder().serviceName(fixString(environmentApplication.getServiceName()))
+            .uri(String.format("%s%s", fixString(environmentApplication.getServiceUri()), fixString(uiModule.getUri())))
             .build();
     }
 

@@ -20,12 +20,13 @@ public class RegisteredClientServiceImpl implements RegisteredClientService {
 
     @Override
     public JpaRegisteredClient findById(String id) {
-        return jpaRegisteredClientRepository.findById(id).orElse(null);
+        return jpaRegisteredClientRepository.findByRegisteredClientId(id).orElse(null);
     }
 
     @Override
     public RegisteredClient findRegisteredClientById(String id) {
-        return jpaRegisteredClientRepository.findById(id).map(JpaRegisteredClient::toRegisteredClient).orElse(null);
+        return jpaRegisteredClientRepository.findByRegisteredClientId(id)
+            .map(JpaRegisteredClient::toRegisteredClient).orElse(null);
     }
 
     @Override

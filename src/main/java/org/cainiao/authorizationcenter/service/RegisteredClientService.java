@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
  */
 public interface RegisteredClientService {
 
-    JpaRegisteredClient findById(String id);
+    JpaRegisteredClient findById(String registeredClientId);
 
     RegisteredClient findRegisteredClientById(String id);
 
