@@ -20,7 +20,7 @@ import java.io.Serial;
  * 因为一个实际运行的【应用】一定是运行在一个环境中的，因此【环境-应用】表的条目才对应一个实际运行的【应用】<br />
  * 而【应用】表的条目，代表的是一个【抽象应用】的概念，代表的是一个【开发目标】<br />
  * 抽象与具体两个概念都很重要，缺一不可，否则就会造成后续设计困难<br />
- * 与【具体应用】相关的配置信息，如域名、URI（有时由于公网域名不够用，会用 URI 区分环境），都在【环境-应用】表中
+ * 与【具体应用】
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
@@ -38,13 +38,13 @@ public class EnvironmentApplication extends IdBaseEntity {
      * 环境ID
      */
     @Column(name = "envapp_environment_id", nullable = false)
-    private String environmentId;
+    private long environmentId;
 
     /**
      * 应用ID
      */
     @Column(name = "envapp_application_id", nullable = false)
-    private String applicationId;
+    private long applicationId;
 
     /**
      * 应用对应的服务名<br />
