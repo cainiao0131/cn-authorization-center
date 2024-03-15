@@ -51,13 +51,13 @@ public class EnvironmentApplication extends IdBaseEntity {
      * 对于前端应用，是前端应用的外部访问域名<br />
      * 对于后端应用，有这些可能性：注册中心服务名、服务网格虚拟服务名、k8s服务名、IP端口、域名
      */
-    @Column(name = "a_service_name")
+    @Column(name = "envapp_service_name")
     private String serviceName;
 
     /**
      * 【应用】对应的URI<br />
      * 用于不同【应用】以URI来隔离的场景
      */
-    @Column(name = "a_service_uri")
+    @Column(name = "envapp_service_uri")
     private String serviceUri;
 }
