@@ -77,14 +77,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
-		<!-- Jackson 默认不支持处理 java.time.Duration 类型 -->
-		<!-- 因此需要 jackson-datatype-jsr310 模块来启用对 Java 8 日期/时间类型的支持 -->
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>

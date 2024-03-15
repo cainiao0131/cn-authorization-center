@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Map;
 
 /**
@@ -20,8 +21,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class JsonStringTokenSettingsConverter
-    implements AttributeConverter<TokenSettings, String>
-{
+    implements AttributeConverter<TokenSettings, String> {
 
     private final ObjectMapper objectMapper;
 
@@ -43,10 +43,24 @@ public class JsonStringTokenSettingsConverter
             return TokenSettings.builder().build();
         }
         try {
-            Map<String, Object> settings = objectMapper.readValue(dbData, new TypeReference<>() {});
+            Map<String, Object> settings = objectMapper.readValue(dbData, new TypeReference<>() {
+            });
             if (settings.isEmpty()) {
                 return TokenSettings.builder().build();
             }
+            // 处理 Duration，因为 readValue 的类型为 Map<String, Object>，所以解码器没有触发，仍然是 String 类型的
+            settings.entrySet().forEach(entry -> {
+                switch (entry.getKey()) {
+                    case "settings.token.access-token-time-to-live", "settings.token.refresh-token-time-to-live",
+                        "settings.token.authorization-code-time-to-live", "settings.token.device-code-time-to-live" -> {
+
+                        try {
+                            entry.setValue(Duration.parse(entry.getValue().toString()));
+                        } catch (Exception ignored) {
+                        }
+                    }
+                }
+            });
             return TokenSettings.withSettings(settings).build();
         } catch (IOException e) {
             throw new RuntimeException("Error converting JSON string to TokenSettings", e);

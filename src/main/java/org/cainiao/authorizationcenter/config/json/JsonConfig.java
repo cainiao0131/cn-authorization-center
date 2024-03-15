@@ -1,9 +1,14 @@
 package org.cainiao.authorizationcenter.config.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.io.IOException;
+import java.time.Duration;
 
 /**
  * <br />
@@ -16,9 +21,29 @@ public class JsonConfig {
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-        // TODO 有时间进一步测试，JavaTimeModule 好像没生效
-        objectMapper.registerModule(new JavaTimeModule());
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Duration.class, new DurationSerializer());
+        module.addDeserializer(Duration.class, new DurationDeserializer());
+        objectMapper.registerModule(module);
         return objectMapper;
     }
 
+    static class DurationSerializer extends JsonSerializer<Duration> {
+        @Override
+        public void serialize(Duration duration, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+            throws IOException {
+
+            jsonGenerator.writeString(duration.toString());
+        }
+    }
+
+    static class DurationDeserializer extends JsonDeserializer<Duration> {
+        @Override
+        public Duration deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
+            throws IOException {
+
+            String durationString = jsonParser.getValueAsString();
+            return Duration.parse(durationString);
+        }
+    }
 }

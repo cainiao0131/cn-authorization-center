@@ -14,19 +14,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @EnableWebSecurity
 @EnableCaching
 @EnableJpaRepositories(
-	basePackages = {"org.cainiao.authorizationcenter.dao.repository"},
-	basePackageClasses = {JpaClientRegistrationRepository.class}
+    basePackages = {"org.cainiao.authorizationcenter.dao.repository"},
+    basePackageClasses = {JpaClientRegistrationRepository.class}
 )
 @EntityScan(
-	basePackages = {"org.cainiao.authorizationcenter.entity"},
-	basePackageClasses = {JpaClientRegistration.class}
+    basePackages = {"org.cainiao.authorizationcenter.entity"},
+    basePackageClasses = {JpaClientRegistration.class}
 )
 public class AuthorizationCenterApplication {
 
-	public static void main(String[] args) {
-		SpringApplication springApplication = new SpringApplication(AuthorizationCenterApplication.class);
-		springApplication.addListeners(new ApplicationPidFileWriter());
-		springApplication.run(args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication springApplication = new SpringApplication(AuthorizationCenterApplication.class);
+        springApplication.addListeners(new ApplicationPidFileWriter());
+        springApplication.run(args);
+    }
 }
