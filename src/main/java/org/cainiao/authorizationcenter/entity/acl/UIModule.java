@@ -28,7 +28,7 @@ public class UIModule extends IdBaseEntity {
      * 父UI模块ID
      */
     @Column(name = "um_parent_id")
-    private long parentId;
+    private Long parentId;
 
     /**
      * 环境应用 ID
