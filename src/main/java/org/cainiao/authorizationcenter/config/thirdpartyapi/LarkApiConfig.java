@@ -2,12 +2,12 @@ package org.cainiao.authorizationcenter.config.thirdpartyapi;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.cainiao.api.lark.api.LarkApi;
-import org.cainiao.api.lark.impl.BaseLarkApi;
+import org.cainiao.api.lark.impl.WebClientLarkApi;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,8 +26,8 @@ public class LarkApiConfig {
      * @return 有缓存的飞书 API
      */
     @Bean
-    public LarkApi larkApi(RestTemplate restTemplate) {
-        return new BaseLarkApi(restTemplate, "https://open.feishu.cn/open-apis/auth/v3");
+    public LarkApi larkApi(WebClient webClient) {
+        return new WebClientLarkApi(webClient, "https://open.feishu.cn/open-apis/auth/v3");
     }
 
     @Bean

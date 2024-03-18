@@ -2,10 +2,7 @@ package org.cainiao.authorizationcenter.config.httpclient;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
+import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * <br />
@@ -16,7 +13,7 @@ import java.util.List;
 public class HttpClientConfig {
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate(List.of(new MappingJackson2HttpMessageConverter()));
+    WebClient webClient() {
+        return WebClient.builder().build();
     }
 }

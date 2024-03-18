@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCo
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,12 +42,13 @@ public class LarkOAuth2AuthorizationCodeGrantRequestEntityConverter
 
     private HttpHeaders convertHeaders(OAuth2AuthorizationCodeGrantRequest authorizationGrantRequest) {
         HttpHeaders headers = new HttpHeaders();
+        ClientRegistration clientRegistration = authorizationGrantRequest.getClientRegistration();
+        Mono<AppAccessTokenResponse> mono = larkApi.authenticateAndAuthorize().getAccessTokens()
+            .getCustomAppAppAccessToken(clientRegistration.getClientId(), clientRegistration.getClientSecret());
+        mono.subscribe(appAccessTokenResponse -> headers.setBearerAuth(appAccessTokenResponse.getAppAccessToken()));
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
-        ClientRegistration clientRegistration = authorizationGrantRequest.getClientRegistration();
-        AppAccessTokenResponse appAccessTokenResponse = larkApi.authenticateAndAuthorize().getAccessTokens()
-            .getCustomAppAppAccessToken(clientRegistration.getClientId(), clientRegistration.getClientSecret());
-        headers.setBearerAuth(appAccessTokenResponse.getAppAccessToken());
+        mono.block();
         return headers;
     }
 
