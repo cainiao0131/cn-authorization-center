@@ -1,8 +1,8 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.lark;
 
 import lombok.RequiredArgsConstructor;
-import org.cainiao.api.lark.LarkApi;
-import org.cainiao.api.lark.authenticateandauthorize.getaccesstokens.dto.response.AppAccessTokenResponse;
+import org.cainiao.api.lark.api.LarkApi;
+import org.cainiao.api.lark.api.authenticateandauthorize.getaccesstokens.dto.response.AppAccessTokenResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -24,8 +24,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 public class LarkOAuth2AuthorizationCodeGrantRequestEntityConverter
-    extends OAuth2AuthorizationCodeGrantRequestEntityConverter
-{
+    extends OAuth2AuthorizationCodeGrantRequestEntityConverter {
 
     private final LarkApi larkApi;
 

@@ -19,5 +19,4 @@ public class HttpClientConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate(List.of(new MappingJackson2HttpMessageConverter()));
     }
-
 }

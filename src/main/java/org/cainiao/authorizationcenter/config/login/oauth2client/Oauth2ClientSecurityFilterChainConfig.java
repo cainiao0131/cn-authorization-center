@@ -1,6 +1,6 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client;
 
-import org.cainiao.api.lark.LarkApi;
+import org.cainiao.api.lark.api.LarkApi;
 import org.cainiao.authorizationcenter.config.login.oauth2client.httpclient.lark.LarkMapOAuth2AccessTokenResponseConverter;
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.DynamicAuthorizationCodeTokenResponseClient;
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.lark.LarkOAuth2AuthorizationCodeGrantRequestEntityConverter;
@@ -55,9 +55,9 @@ public class Oauth2ClientSecurityFilterChainConfig {
     @Bean
     @Order(OAUTH2_CLIENT_LOGIN_PRECEDENCE)
     SecurityFilterChain oauth2ClientLoginFilterChain(HttpSecurity http,
-                                                  ClientRegistrationRepository clientRegistrationRepository,
-                                                  LarkApi larkApi,
-                                                  CNOAuth2ClientProperties properties) throws Exception {
+                                                     ClientRegistrationRepository clientRegistrationRepository,
+                                                     LarkApi larkApi,
+                                                     CNOAuth2ClientProperties properties) throws Exception {
         RestOperations larkRestTemplate = getLarkRestOperations();
 
         http
@@ -93,22 +93,19 @@ public class Oauth2ClientSecurityFilterChainConfig {
      */
     @Bean
     ClientRegistrationRepository clientRegistrationRepository(
-        JpaClientRegistrationRepository jpaClientRegistrationRepository)
-    {
+        JpaClientRegistrationRepository jpaClientRegistrationRepository) {
         return new DaoClientRegistrationRepository(jpaClientRegistrationRepository);
     }
 
     private OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver(
-        ClientRegistrationRepository clientRegistrationRepository)
-    {
+        ClientRegistrationRepository clientRegistrationRepository) {
         DefaultOAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver =
             new DefaultOAuth2AuthorizationRequestResolver(clientRegistrationRepository,
                 OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI);
         oAuth2AuthorizationRequestResolver.setAuthorizationRequestCustomizer(oAuth2AuthorizationRequestBuilder ->
             oAuth2AuthorizationRequestBuilder.attributes(attributes -> {
                 if (Optional.ofNullable(attributes.get("registration_id")).orElse("").toString()
-                    .equals(LARK_REGISTRATION_ID))
-                {
+                    .equals(LARK_REGISTRATION_ID)) {
                     // 飞书的 clientId 的 Query 参数名不是默认的 client_id 而是 app_id
                     oAuth2AuthorizationRequestBuilder.parameters(parameters -> {
                         if (parameters.containsKey(OAuth2ParameterNames.CLIENT_ID)) {
@@ -134,8 +131,7 @@ public class Oauth2ClientSecurityFilterChainConfig {
                 @NonNull
                 public Object read(@NonNull Type type, @Nullable Class<?> contextClass,
                                    @NonNull HttpInputMessage inputMessage)
-                    throws IOException, HttpMessageNotReadableException
-                {
+                    throws IOException, HttpMessageNotReadableException {
                     Object result = super.read(type, contextClass, inputMessage);
                     Object data;
                     if (result instanceof Map<?, ?> resultMap && (data = resultMap.get("data")) != null) {

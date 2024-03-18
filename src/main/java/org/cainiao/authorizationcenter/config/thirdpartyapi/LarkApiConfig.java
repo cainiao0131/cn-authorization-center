@@ -1,7 +1,7 @@
 package org.cainiao.authorizationcenter.config.thirdpartyapi;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import org.cainiao.api.lark.LarkApi;
+import org.cainiao.api.lark.api.LarkApi;
 import org.cainiao.api.lark.impl.BaseLarkApi;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
