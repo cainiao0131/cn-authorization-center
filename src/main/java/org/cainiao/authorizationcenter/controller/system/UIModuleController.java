@@ -31,12 +31,12 @@ public class UIModuleController {
     private final UIModuleRepository uiModuleRepository;
     private final EnvironmentApplicationRepository environmentApplicationRepository;
 
-    @GetMapping("ui-module/{id}/url")
+    @GetMapping("{envAppId}/ui-module/{key}/url")
     @Operation(summary = "文章管理分页查询文章")
     public UiModuleUrl uiModuleUrl(
-        @Parameter(description = "UI模块ID", required = true) @PathVariable("id") long id)
-    {
-        Optional<UIModule> uiModuleOptional = uiModuleRepository.findById(id);
+        @Parameter(description = "UI模块所属的环境应用ID", required = true) @PathVariable("envAppId") long envAppId,
+        @Parameter(description = "UI模块Key", required = true) @PathVariable("key") String key) {
+        Optional<UIModule> uiModuleOptional = uiModuleRepository.findByEnvironmentApplicationIdAndKey(envAppId, key);
         if (uiModuleOptional.isEmpty()) {
             return null;
         }

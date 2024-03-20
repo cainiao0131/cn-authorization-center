@@ -1,6 +1,7 @@
 package org.cainiao.authorizationcenter.entity.acl;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,12 @@ public class UIModule extends IdBaseEntity {
     private Long parentId;
 
     /**
+     * 对应前端路由中的 name
+     */
+    @Column(name = "um_key", nullable = false)
+    private String key;
+
+    /**
      * 环境应用 ID
      */
     @Column(name = "um_environment_application_id", nullable = false)
@@ -39,8 +46,14 @@ public class UIModule extends IdBaseEntity {
     /**
      * UI模块名称
      */
-    @Column(name = "um_name", nullable = false)
+    @Column(name = "um_name")
     private String name;
+
+    /**
+     * 描述
+     */
+    @Column(name = "um_description")
+    private String description;
 
     /**
      * UI模块对应的前端 URI
