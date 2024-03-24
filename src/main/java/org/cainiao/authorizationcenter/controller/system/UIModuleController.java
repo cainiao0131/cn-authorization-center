@@ -32,7 +32,7 @@ public class UIModuleController {
     private final EnvironmentApplicationRepository environmentApplicationRepository;
 
     @GetMapping("{envAppId}/ui-module/{key}/url")
-    @Operation(summary = "文章管理分页查询文章")
+    @Operation(summary = "特定环境的特定应用的UI模块对应的前端URL")
     public UiModuleUrl uiModuleUrl(
         @Parameter(description = "UI模块所属的环境应用ID", required = true) @PathVariable("envAppId") long envAppId,
         @Parameter(description = "UI模块Key", required = true) @PathVariable("key") String key) {

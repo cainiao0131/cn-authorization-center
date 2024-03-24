@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.cainiao.acl</groupId>
+            <artifactId>cn-acl-core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.cainiao.oauth2.client</groupId>
             <artifactId>cn-oauth2-client-core</artifactId>
         </dependency>

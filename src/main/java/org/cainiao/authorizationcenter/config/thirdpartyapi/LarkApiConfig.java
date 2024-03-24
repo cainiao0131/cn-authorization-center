@@ -27,7 +27,7 @@ public class LarkApiConfig {
      */
     @Bean
     public LarkApi larkApi(WebClient webClient) {
-        return new WebClientLarkApi(webClient, "https://open.feishu.cn/open-apis/auth/v3");
+        return new WebClientLarkApi(webClient, "https://open.feishu.cn/open-apis");
     }
 
     @Bean
