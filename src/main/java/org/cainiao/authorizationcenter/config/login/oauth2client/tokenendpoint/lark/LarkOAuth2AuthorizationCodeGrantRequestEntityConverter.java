@@ -1,8 +1,8 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.lark;
 
 import lombok.RequiredArgsConstructor;
-import org.cainiao.api.lark.api.LarkApi;
-import org.cainiao.api.lark.api.authenticateandauthorize.getaccesstokens.dto.response.AppAccessTokenResponse;
+import org.cainiao.api.lark.dto.response.authenticateandauthorize.getaccesstokens.AppAccessTokenResponse;
+import org.cainiao.api.lark.imperative.LarkApi;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -11,8 +11,8 @@ import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCo
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequestEntityConverter;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
+import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,13 +42,14 @@ public class LarkOAuth2AuthorizationCodeGrantRequestEntityConverter
 
     private HttpHeaders convertHeaders(OAuth2AuthorizationCodeGrantRequest authorizationGrantRequest) {
         HttpHeaders headers = new HttpHeaders();
-        ClientRegistration clientRegistration = authorizationGrantRequest.getClientRegistration();
-        Mono<AppAccessTokenResponse> mono = larkApi.authenticateAndAuthorize().getAccessTokens()
-            .getCustomAppAppAccessToken(clientRegistration.getClientId(), clientRegistration.getClientSecret());
-        mono.subscribe(appAccessTokenResponse -> headers.setBearerAuth(appAccessTokenResponse.getAppAccessToken()));
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
-        mono.block();
+        ClientRegistration clientRegistration = authorizationGrantRequest.getClientRegistration();
+        AppAccessTokenResponse appAccessTokenResponse = larkApi.authenticateAndAuthorize().getAccessTokens()
+            .getCustomAppAppAccessToken(clientRegistration.getClientId(), clientRegistration.getClientSecret())
+            .getBody();
+        Assert.notNull(appAccessTokenResponse, "appAccessTokenResponse is null");
+        headers.setBearerAuth(appAccessTokenResponse.getAppAccessToken());
         return headers;
     }
 

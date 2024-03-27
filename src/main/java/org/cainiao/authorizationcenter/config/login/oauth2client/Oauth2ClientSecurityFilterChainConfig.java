@@ -1,6 +1,6 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client;
 
-import org.cainiao.api.lark.api.LarkApi;
+import org.cainiao.api.lark.imperative.LarkApi;
 import org.cainiao.authorizationcenter.config.login.oauth2client.httpclient.lark.LarkMapOAuth2AccessTokenResponseConverter;
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.DynamicAuthorizationCodeTokenResponseClient;
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.lark.LarkOAuth2AuthorizationCodeGrantRequestEntityConverter;
