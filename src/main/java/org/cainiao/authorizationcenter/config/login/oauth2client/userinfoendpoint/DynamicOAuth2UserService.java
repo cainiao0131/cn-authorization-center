@@ -1,5 +1,6 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client.userinfoendpoint;
 
+import org.cainiao.authorizationcenter.service.UserService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.RequestEntity;
@@ -33,6 +34,8 @@ import java.util.*;
  */
 public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
+    private final UserService userService;
+
     private static final String MISSING_USER_INFO_URI_ERROR_CODE = "missing_user_info_uri";
 
     private static final String MISSING_USER_NAME_ATTRIBUTE_ERROR_CODE = "missing_user_name_attribute";
@@ -40,7 +43,8 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
     private static final String INVALID_USER_INFO_RESPONSE_ERROR_CODE = "invalid_user_info_response";
 
     private static final ParameterizedTypeReference<Map<String, Object>>
-        PARAMETERIZED_RESPONSE_TYPE = new ParameterizedTypeReference<>() {};
+        PARAMETERIZED_RESPONSE_TYPE = new ParameterizedTypeReference<>() {
+    };
 
     private Converter<OAuth2UserRequest, RequestEntity<?>>
         requestEntityConverter = new OAuth2UserRequestEntityConverter();
@@ -48,10 +52,11 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
     private final RestOperations defaultRestOperations;
     private final Map<String, RestOperations> restOperationsRegistry = new HashMap<>();
 
-    public DynamicOAuth2UserService() {
+    public DynamicOAuth2UserService(UserService userService_) {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
         this.defaultRestOperations = restTemplate;
+        this.userService = userService_;
     }
 
     public DynamicOAuth2UserService registerRestOperations(String registrationId, RestOperations restOperations) {
@@ -90,6 +95,8 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
         for (String authority : token.getScopes()) {
             authorities.add(new SimpleGrantedAuthority("SCOPE_" + authority));
         }
+        // 用户首次通过三方登录平台，自动注册平台用户
+        userService.createIfFirstLogin(userRequest, userAttributes);
         return new DefaultOAuth2User(authorities,
             Optional.ofNullable(userAttributes).orElse(new HashMap<>()), userNameAttributeName);
     }
@@ -99,8 +106,7 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
         try {
             return Optional.ofNullable(restOperationsRegistry.get(registrationId)).orElse(defaultRestOperations)
                 .exchange(request, PARAMETERIZED_RESPONSE_TYPE);
-        }
-        catch (OAuth2AuthorizationException ex) {
+        } catch (OAuth2AuthorizationException ex) {
             OAuth2Error oauth2Error = ex.getError();
             StringBuilder errorDetails = new StringBuilder();
             errorDetails.append("Error details: [");
@@ -115,8 +121,7 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
                 "An error occurred while attempting to retrieve the UserInfo Resource: " + errorDetails,
                 null);
             throw new OAuth2AuthenticationException(oauth2Error, oauth2Error.toString(), ex);
-        }
-        catch (UnknownContentTypeException ex) {
+        } catch (UnknownContentTypeException ex) {
             String errorMessage = "An error occurred while attempting to retrieve the UserInfo Resource from '"
                 + userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri()
                 + "': response contains invalid content type '" + ex.getContentType().toString() + "'. "
@@ -127,8 +132,7 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
                 + "as defined in OpenID Connect 1.0: 'https://openid.net/specs/openid-connect-core-1_0.html#UserInfo'";
             OAuth2Error oauth2Error = new OAuth2Error(INVALID_USER_INFO_RESPONSE_ERROR_CODE, errorMessage, null);
             throw new OAuth2AuthenticationException(oauth2Error, oauth2Error.toString(), ex);
-        }
-        catch (RestClientException ex) {
+        } catch (RestClientException ex) {
             OAuth2Error oauth2Error = new OAuth2Error(INVALID_USER_INFO_RESPONSE_ERROR_CODE,
                 "An error occurred while attempting to retrieve the UserInfo Resource: " + ex.getMessage(), null);
             throw new OAuth2AuthenticationException(oauth2Error, oauth2Error.toString(), ex);
@@ -138,8 +142,9 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
     /**
      * Sets the {@link Converter} used for converting the {@link OAuth2UserRequest} to a
      * {@link RequestEntity} representation of the UserInfo Request.
+     *
      * @param requestEntityConverter the {@link Converter} used for converting to a
-     * {@link RequestEntity} representation of the UserInfo Request
+     *                               {@link RequestEntity} representation of the UserInfo Request
      * @since 5.1
      */
     public final void setRequestEntityConverter(Converter<OAuth2UserRequest, RequestEntity<?>> requestEntityConverter) {

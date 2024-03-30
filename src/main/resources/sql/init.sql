@@ -68,7 +68,8 @@ CREATE TABLE oauth2_client_registration (
 
 CREATE TABLE public.t_system (
 	id bigint NOT NULL,
-    s_name varchar(100) NOT NULL,
+	sys_tenant_id bigint NOT NULL,
+    sys_name varchar(100) NOT NULL,
 	created_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	updated_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	created_by varchar(100) NULL,
@@ -85,10 +86,10 @@ CREATE TABLE public.t_system (
 
 CREATE TABLE public.t_application (
 	id bigint NOT NULL,
-    a_system_id bigint NOT NULL,
-    a_name varchar(100) NOT NULL,
-    a_service_name varchar(100) DEFAULT NULL::character varying NULL,
-    a_service_uri varchar(100) DEFAULT NULL::character varying NULL,
+    app_system_id bigint NOT NULL,
+    app_name varchar(100) NOT NULL,
+    app_service_name varchar(100) DEFAULT NULL::character varying NULL,
+    app_service_uri varchar(100) DEFAULT NULL::character varying NULL,
 	created_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	updated_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	created_by varchar(100) NULL,
@@ -105,52 +106,14 @@ CREATE TABLE public.t_application (
 
 CREATE TABLE public.t_ui_module (
 	id bigint NOT NULL,
-    um_parent_id int8 DEFAULT NULL::bigint NULL,
-    um_environment_application_id bigint NOT NULL,
-    um_name varchar(100) NOT NULL,
-    um_uri varchar(200) DEFAULT NULL::character varying NULL,
+    uim_parent_id int8 DEFAULT NULL::bigint NULL,
+    uim_environment_application_id bigint NOT NULL,
+    uim_name varchar(100) NOT NULL,
+    uim_uri varchar(200) DEFAULT NULL::character varying NULL,
 	created_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	updated_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	created_by varchar(100) NULL,
 	updated_by varchar(100) NULL,
 	deleted bool DEFAULT false NOT NULL,
 	CONSTRAINT ui_module_pkey PRIMARY KEY (id)
-);
-
--- public.t_environment_application definition
-
--- Drop table
-
--- DROP TABLE public.t_environment_application;
-
-CREATE TABLE public.t_environment_application (
-	id bigint NOT NULL,
-	envapp_environment_id bigint NOT NULL,
-	envapp_application_id bigint NOT NULL,
-	envapp_service_name varchar(100) DEFAULT NULL::character varying NULL,
-	envapp_service_uri varchar(100) DEFAULT NULL::character varying NULL,
-	created_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	updated_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	created_by varchar(100) NULL,
-	updated_by varchar(100) NULL,
-	deleted bool DEFAULT false NOT NULL,
-	CONSTRAINT environment_application_pkey PRIMARY KEY (id)
-);
-
--- public.t_environment definition
-
--- Drop table
-
--- DROP TABLE public.t_environment;
-
-CREATE TABLE public.t_environment (
-	id bigint NOT NULL,
-	env_name varchar(100) NOT NULL,
-	env_description varchar(100) NULL,
-	created_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	updated_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	created_by varchar(100) NULL,
-	updated_by varchar(100) NULL,
-	deleted bool DEFAULT false NOT NULL,
-	CONSTRAINT environment_pkey PRIMARY KEY (id)
 );

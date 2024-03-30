@@ -1,4 +1,4 @@
-package org.cainiao.authorizationcenter.entity.acl;
+package org.cainiao.authorizationcenter.entity.acl.organization;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,29 +11,29 @@ import org.cainiao.common.entity.IdBaseEntity;
 import java.io.Serial;
 
 /**
- * TODO 考虑创建一个授权中心的库，将部分 OAuth2 Client 不用的类移过去<br />
+ * 表示用户属于哪些租户<br />
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
-@Entity(name = "t_system")
+@Entity(name = "t_tenant_user")
 @NoArgsConstructor
 @SuperBuilder
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class System extends IdBaseEntity {
+public class TenantUser extends IdBaseEntity {
 
     @Serial
-    private static final long serialVersionUID = -4017908273219433506L;
+    private static final long serialVersionUID = -8073685222904689538L;
 
     /**
-     * 所属租户ID
+     * 租户ID
      */
-    @Column(name = "sys_tenant_id", nullable = false)
+    @Column(name = "teu_tenant_id", nullable = false)
     private long tenantId;
 
     /**
-     * 系统名称
+     * 平台用户ID
      */
-    @Column(name = "sys_name", nullable = false, unique = true)
-    private String name;
+    @Column(name = "teu_user_id", nullable = false)
+    private long userId;
 }

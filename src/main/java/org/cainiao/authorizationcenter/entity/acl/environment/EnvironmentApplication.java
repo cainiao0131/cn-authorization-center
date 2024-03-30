@@ -1,4 +1,4 @@
-package org.cainiao.authorizationcenter.entity.acl;
+package org.cainiao.authorizationcenter.entity.acl.environment;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,13 +37,13 @@ public class EnvironmentApplication extends IdBaseEntity {
     /**
      * 环境ID
      */
-    @Column(name = "envapp_environment_id", nullable = false)
+    @Column(name = "ena_environment_id", nullable = false)
     private long environmentId;
 
     /**
      * 应用ID
      */
-    @Column(name = "envapp_application_id", nullable = false)
+    @Column(name = "ena_application_id", nullable = false)
     private long applicationId;
 
     /**
@@ -51,13 +51,19 @@ public class EnvironmentApplication extends IdBaseEntity {
      * 对于前端应用，是前端应用的外部访问域名<br />
      * 对于后端应用，有这些可能性：注册中心服务名、服务网格虚拟服务名、k8s服务名、IP端口、域名
      */
-    @Column(name = "envapp_service_name")
+    @Column(name = "ena_service_name")
     private String serviceName;
 
     /**
      * 【应用】对应的URI<br />
      * 用于不同【应用】以URI来隔离的场景
      */
-    @Column(name = "envapp_service_uri")
+    @Column(name = "ena_service_uri")
     private String serviceUri;
+
+    /**
+     * 如果这个应用在授权服务器注册了 OAuth2 客户端，则有值，否则为 null
+     */
+    @Column(name = "ena_registered_client_id")
+    private String registeredClientId;
 }

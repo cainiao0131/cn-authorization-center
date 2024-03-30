@@ -5,6 +5,7 @@ import org.cainiao.authorizationcenter.config.login.oauth2client.httpclient.lark
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.DynamicAuthorizationCodeTokenResponseClient;
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.lark.LarkOAuth2AuthorizationCodeGrantRequestEntityConverter;
 import org.cainiao.authorizationcenter.config.login.oauth2client.userinfoendpoint.DynamicOAuth2UserService;
+import org.cainiao.authorizationcenter.service.UserService;
 import org.cainiao.oauth2.client.core.dao.repository.JpaClientRegistrationRepository;
 import org.cainiao.oauth2.client.core.filter.ForceHttpsPortAndSchemeFilter;
 import org.cainiao.oauth2.client.core.properties.CNOAuth2ClientProperties;
@@ -57,6 +58,7 @@ public class Oauth2ClientSecurityFilterChainConfig {
     SecurityFilterChain oauth2ClientLoginFilterChain(HttpSecurity http,
                                                      ClientRegistrationRepository clientRegistrationRepository,
                                                      LarkApi larkApi,
+                                                     UserService userService,
                                                      CNOAuth2ClientProperties properties) throws Exception {
         RestOperations larkRestTemplate = getLarkRestOperations();
 
@@ -76,7 +78,7 @@ public class Oauth2ClientSecurityFilterChainConfig {
                         .registerRestOperations(LARK_REGISTRATION_ID, larkRestTemplate)))
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                     // OAuth2UserService 可以通过 @Bean 进行自定义，这里为了不影响其它 FilterChain，直接构造
-                    .userService(new DynamicOAuth2UserService()
+                    .userService(new DynamicOAuth2UserService(userService)
                         .registerRestOperations(LARK_REGISTRATION_ID, larkRestTemplate))))
             .oauth2Client(withDefaults());
         if (properties.isForceHttps()) {
@@ -97,6 +99,14 @@ public class Oauth2ClientSecurityFilterChainConfig {
         return new DaoClientRegistrationRepository(jpaClientRegistrationRepository);
     }
 
+    /**
+     * 配置解析器<br />
+     * 根据当前请求路径参数中的 registrationId 解析授权中心的授权端点 URL，包括解析参数<br />
+     * 这里之所以要自定义，是因为飞书的请求参数名称与默认值不同
+     *
+     * @param clientRegistrationRepository ClientRegistrationRepository
+     * @return OAuth2AuthorizationRequestResolver
+     */
     private OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver(
         ClientRegistrationRepository clientRegistrationRepository) {
         DefaultOAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver =
@@ -106,11 +116,11 @@ public class Oauth2ClientSecurityFilterChainConfig {
             oAuth2AuthorizationRequestBuilder.attributes(attributes -> {
                 if (Optional.ofNullable(attributes.get("registration_id")).orElse("").toString()
                     .equals(LARK_REGISTRATION_ID)) {
+
                     // 飞书的 clientId 的 Query 参数名不是默认的 client_id 而是 app_id
                     oAuth2AuthorizationRequestBuilder.parameters(parameters -> {
                         if (parameters.containsKey(OAuth2ParameterNames.CLIENT_ID)) {
-                            Object value = parameters.remove(OAuth2ParameterNames.CLIENT_ID);
-                            parameters.put("app_id", value);
+                            parameters.put("app_id", parameters.remove(OAuth2ParameterNames.CLIENT_ID));
                         }
                     });
                 }
@@ -143,5 +153,4 @@ public class Oauth2ClientSecurityFilterChainConfig {
         larkRestTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
         return larkRestTemplate;
     }
-
 }

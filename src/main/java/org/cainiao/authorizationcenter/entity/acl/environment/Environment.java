@@ -1,4 +1,4 @@
-package org.cainiao.authorizationcenter.entity.acl;
+package org.cainiao.authorizationcenter.entity.acl.environment;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

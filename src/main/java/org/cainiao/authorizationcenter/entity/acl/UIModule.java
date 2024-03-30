@@ -28,37 +28,36 @@ public class UIModule extends IdBaseEntity {
     /**
      * 父UI模块ID
      */
-    @Column(name = "um_parent_id")
+    @Column(name = "uim_parent_id")
     private Long parentId;
 
     /**
      * 对应前端路由中的 name
      */
-    @Column(name = "um_key", nullable = false)
+    @Column(name = "uim_key", nullable = false)
     private String key;
 
     /**
      * 环境应用 ID
      */
-    @Column(name = "um_environment_application_id", nullable = false)
+    @Column(name = "uim_environment_application_id", nullable = false)
     private long environmentApplicationId;
 
     /**
      * UI模块名称
      */
-    @Column(name = "um_name")
+    @Column(name = "uim_name")
     private String name;
 
     /**
      * 描述
      */
-    @Column(name = "um_description")
+    @Column(name = "uim_description")
     private String description;
 
     /**
      * UI模块对应的前端 URI
      */
-    @Column(name = "um_uri")
+    @Column(name = "uim_uri")
     private String uri;
-
 }

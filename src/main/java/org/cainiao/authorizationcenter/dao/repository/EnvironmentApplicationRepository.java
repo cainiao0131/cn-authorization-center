@@ -1,6 +1,6 @@
 package org.cainiao.authorizationcenter.dao.repository;
 
-import org.cainiao.authorizationcenter.entity.acl.EnvironmentApplication;
+import org.cainiao.authorizationcenter.entity.acl.environment.EnvironmentApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

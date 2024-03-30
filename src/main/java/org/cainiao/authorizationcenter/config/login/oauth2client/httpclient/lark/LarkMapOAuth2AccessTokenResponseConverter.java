@@ -18,8 +18,7 @@ import static org.springframework.security.oauth2.core.OAuth2AccessToken.TokenTy
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
 public class LarkMapOAuth2AccessTokenResponseConverter
-    implements Converter<Map<String, Object>, OAuth2AccessTokenResponse>
-{
+    implements Converter<Map<String, Object>, OAuth2AccessTokenResponse> {
 
     @Override
     public OAuth2AccessTokenResponse convert(@NonNull Map<String, Object> source) {
@@ -29,7 +28,7 @@ public class LarkMapOAuth2AccessTokenResponseConverter
                 new OAuth2Error(code.toString(), source.get("message").toString(), null));
         }
         Object data = source.get("data");
-        if (!(data instanceof Map<?,?> dataMap)) {
+        if (!(data instanceof Map<?, ?> dataMap)) {
             throw new OAuth2AuthorizationException(new OAuth2Error(code.toString(), "no data in response", null));
         }
         return OAuth2AccessTokenResponse.withToken(getParameterValue(dataMap, OAuth2ParameterNames.ACCESS_TOKEN))
@@ -62,8 +61,8 @@ public class LarkMapOAuth2AccessTokenResponseConverter
                 // Attempt to coerce to a long (typically from a String)
                 try {
                     parameterValue = Long.parseLong(obj.toString());
+                } catch (NumberFormatException ignored) {
                 }
-                catch (NumberFormatException ignored) {}
             }
         }
         return parameterValue;
@@ -79,7 +78,7 @@ public class LarkMapOAuth2AccessTokenResponseConverter
 
     private static String getParameterValue(Map<?, ?> tokenResponseParameters, String parameterName) {
         Object obj = tokenResponseParameters.get(parameterName);
-        return (obj != null) ? obj.toString() : null;
+        return obj != null ? obj.toString() : null;
     }
 
 }

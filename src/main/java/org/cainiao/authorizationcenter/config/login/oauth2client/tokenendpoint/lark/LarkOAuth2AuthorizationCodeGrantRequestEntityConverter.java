@@ -48,7 +48,7 @@ public class LarkOAuth2AuthorizationCodeGrantRequestEntityConverter
         AppAccessTokenResponse appAccessTokenResponse = larkApi.authenticateAndAuthorize().getAccessTokens()
             .getCustomAppAppAccessToken(clientRegistration.getClientId(), clientRegistration.getClientSecret())
             .getBody();
-        Assert.notNull(appAccessTokenResponse, "appAccessTokenResponse is null");
+        Assert.notNull(appAccessTokenResponse, "appAccessTokenResponse cannot be null");
         headers.setBearerAuth(appAccessTokenResponse.getAppAccessToken());
         return headers;
     }
