@@ -1,6 +1,6 @@
-package org.cainiao.authorizationcenter.dao.repository;
+package org.cainiao.authorizationcenter.dao.repository.acl.technology;
 
-import org.cainiao.authorizationcenter.entity.acl.UIModule;
+import org.cainiao.authorizationcenter.entity.acl.technology.UIModule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -3,11 +3,15 @@ package org.cainiao.authorizationcenter.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.cainiao.authorizationcenter.dao.repository.acl.user.LarkUserRepository;
 import org.cainiao.authorizationcenter.dao.repository.acl.user.UserRepository;
+import org.cainiao.authorizationcenter.entity.acl.technology.SystemUser;
 import org.cainiao.authorizationcenter.entity.acl.user.LarkUser;
 import org.cainiao.authorizationcenter.entity.acl.user.User;
+import org.cainiao.authorizationcenter.service.SystemUserService;
+import org.cainiao.authorizationcenter.service.TenantUserService;
 import org.cainiao.authorizationcenter.service.UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.Map;
@@ -27,15 +31,24 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final LarkUserRepository larkUserRepository;
+    private final SystemUserService systemUserService;
+    private final TenantUserService tenantUserService;
 
     @Override
-    public void createIfFirstLogin(OAuth2UserRequest userRequest, Map<String, Object> userAttributes) {
+    @Transactional
+    public void createIfFirstLogin(String clientId, OAuth2UserRequest userRequest, Map<String, Object> userAttributes) {
+        // 平台用户 ID
+        long cnUserId = -1;
         if (LARK_REGISTRATION_ID.equals(userRequest.getClientRegistration().getRegistrationId())) {
-            createIfFirstLarkLogin(userAttributes);
+            // 通过【飞书】登录【平台】
+            cnUserId = createIfFirstLarkLogin(userAttributes);
         }
+        SystemUser systemUser = systemUserService.createIfFirstUse(cnUserId, clientId);
+        tenantUserService.createIfFirstUse(cnUserId, systemUser.getSystemId());
+        userAttributes.put("system_user_id", systemUser.getSystemUserId());
     }
 
-    private void createIfFirstLarkLogin(Map<String, Object> userAttributes) {
+    private long createIfFirstLarkLogin(Map<String, Object> userAttributes) {
         CnMap body = CnMap.toCnMap(userAttributes);
         Assert.notNull(body, "userAttributes cannot be null");
         String larkUserId = body.getString("user_id");
@@ -54,6 +67,6 @@ public class UserServiceImpl implements UserService {
                 .unionId(body.getString("union_id"))
                 .build());
         }
-        userAttributes.put("cn_user_id", userId);
+        return userId;
     }
 }

@@ -1,5 +1,7 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.cainiao.api.lark.imperative.LarkApi;
 import org.cainiao.authorizationcenter.config.login.oauth2client.httpclient.lark.LarkMapOAuth2AccessTokenResponseConverter;
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.DynamicAuthorizationCodeTokenResponseClient;
@@ -28,6 +30,8 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
@@ -54,11 +58,19 @@ public class Oauth2ClientSecurityFilterChainConfig {
     public static final String LARK_REGISTRATION_ID = "cn-lark-client";
 
     @Bean
+    RequestCache requestCache() {
+        return new HttpSessionRequestCache();
+    }
+
+    @Bean
     @Order(OAUTH2_CLIENT_LOGIN_PRECEDENCE)
     SecurityFilterChain oauth2ClientLoginFilterChain(HttpSecurity http,
                                                      ClientRegistrationRepository clientRegistrationRepository,
                                                      LarkApi larkApi,
                                                      UserService userService,
+                                                     RequestCache requestCache,
+                                                     HttpServletRequest httpServletRequest,
+                                                     HttpServletResponse httpServletResponse,
                                                      CNOAuth2ClientProperties properties) throws Exception {
         RestOperations larkRestTemplate = getLarkRestOperations();
 
@@ -78,7 +90,7 @@ public class Oauth2ClientSecurityFilterChainConfig {
                         .registerRestOperations(LARK_REGISTRATION_ID, larkRestTemplate)))
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                     // OAuth2UserService 可以通过 @Bean 进行自定义，这里为了不影响其它 FilterChain，直接构造
-                    .userService(new DynamicOAuth2UserService(userService)
+                    .userService(new DynamicOAuth2UserService(userService, requestCache, httpServletRequest, httpServletResponse)
                         .registerRestOperations(LARK_REGISTRATION_ID, larkRestTemplate))))
             .oauth2Client(withDefaults());
         if (properties.isForceHttps()) {

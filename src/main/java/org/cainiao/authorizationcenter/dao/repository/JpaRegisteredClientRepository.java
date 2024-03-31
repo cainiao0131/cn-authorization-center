@@ -19,5 +19,4 @@ public interface JpaRegisteredClientRepository extends JpaRepository<JpaRegister
     boolean existsByClientId(String clientId);
 
     boolean existsByClientSecret(String clientSecret);
-
 }

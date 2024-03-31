@@ -36,4 +36,12 @@ public class TenantUser extends IdBaseEntity {
      */
     @Column(name = "teu_user_id", nullable = false)
     private long userId;
+
+    /**
+     * 用户在这个租户中的唯一标识<br />
+     * 租户内的资源应该以这个 ID 来标识资源由哪个用户所有，而不是用平台用户ID<br />
+     * 已达到用户ID在租户间隔离的目的，并且可用于将同一个租户内的多个【系统用户ID】关联起来（类似飞书的union_id）
+     */
+    @Column(name = "teu_tenant_user_id", nullable = false)
+    private String tenantUserId;
 }

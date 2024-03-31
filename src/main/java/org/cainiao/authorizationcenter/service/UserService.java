@@ -36,5 +36,5 @@ public interface UserService {
      * @param userAttributes 最终会被设置为 DefaultOAuth2User 的 attributes，且会被转换为不可变的 Map<br />
      *                       因此这里是最后可以将平台用户 ID 设置到授权中心鉴权主体中的机会
      */
-    void createIfFirstLogin(OAuth2UserRequest userRequest, Map<String, Object> userAttributes);
+    void createIfFirstLogin(String clientId, OAuth2UserRequest userRequest, Map<String, Object> userAttributes);
 }

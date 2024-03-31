@@ -52,10 +52,14 @@ public class AuthorizationServerConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
             // 启用 OpenID Connect 1.0
-            .oidc(withDefaults());
+            .oidc(oidcConfigurer -> oidcConfigurer
+                .userInfoEndpoint(oidcUserInfoEndpointConfigurer -> oidcUserInfoEndpointConfigurer
+                    .userInfoMapper(new DynamicOidcUserInfoMapper())));
+        // OidcUserInfoEndpointConfigurer
         http
             // Accept access tokens for User Info and/or Client Registration
-            .oauth2ResourceServer(oAuth2ResourceServerConfigurer -> oAuth2ResourceServerConfigurer.jwt(withDefaults()))
+            .oauth2ResourceServer(oAuth2ResourceServerConfigurer -> oAuth2ResourceServerConfigurer
+                .jwt(withDefaults()))
             // 未鉴权则重定向到登录页，用自定义的 DynamicAuthenticationEntryPoint 实现动态确定登录页
             .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
                 .defaultAuthenticationEntryPointFor(new DynamicAuthenticationEntryPoint("/login"),

@@ -60,24 +60,6 @@ CREATE TABLE oauth2_client_registration (
 	CONSTRAINT oauth2_client_registration_pkey PRIMARY KEY (id)
 );
 
--- public.t_system definition
-
--- Drop table
-
--- DROP TABLE public.t_system;
-
-CREATE TABLE public.t_system (
-	id bigint NOT NULL,
-	sys_tenant_id bigint NOT NULL,
-    sys_name varchar(100) NOT NULL,
-	created_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	updated_time timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	created_by varchar(100) NULL,
-	updated_by varchar(100) NULL,
-	deleted bool DEFAULT false NOT NULL,
-	CONSTRAINT system_pkey PRIMARY KEY (id)
-);
-
 -- public.t_application definition
 
 -- Drop table

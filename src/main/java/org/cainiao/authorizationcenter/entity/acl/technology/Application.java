@@ -1,4 +1,4 @@
-package org.cainiao.authorizationcenter.entity.acl;
+package org.cainiao.authorizationcenter.entity.acl.technology;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,25 +15,25 @@ import java.io.Serial;
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
-@Entity(name = "t_system")
+@Entity(name = "t_application")
 @NoArgsConstructor
 @SuperBuilder
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class System extends IdBaseEntity {
+public class Application extends IdBaseEntity {
 
     @Serial
-    private static final long serialVersionUID = -4017908273219433506L;
+    private static final long serialVersionUID = -4505057660743337320L;
 
     /**
-     * 所属租户ID
+     * 所属系统ID
      */
-    @Column(name = "sys_tenant_id", nullable = false)
-    private long tenantId;
+    @Column(name = "app_system_id", nullable = false)
+    private long systemId;
 
     /**
-     * 系统名称
+     * 应用名称
      */
-    @Column(name = "sys_name", nullable = false, unique = true)
+    @Column(name = "app_name", nullable = false, unique = true)
     private String name;
 }

@@ -64,6 +64,6 @@ public class EnvironmentApplication extends IdBaseEntity {
     /**
      * 如果这个应用在授权服务器注册了 OAuth2 客户端，则有值，否则为 null
      */
-    @Column(name = "ena_registered_client_id")
-    private String registeredClientId;
+    @Column(name = "ena_client_id")
+    private String clientId;
 }
