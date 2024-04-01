@@ -51,7 +51,7 @@ public class LarkController {
     @GetMapping("/drive/explorer/v2/folder/{folderToken}/meta")
     @Operation(summary = "根据 folderToken 获取该文件夹的元信息")
     @HasScope({"lark"})
-    public LarkDataResponse<LarkFolderMeta> listItemsInFolder(
+    public LarkDataResponse<LarkFolderMeta> getFolderMeta(
         @Parameter(description = "文件夹Token") @PathVariable("folderToken") String folderToken) {
 
         return larkApi.docs().space().folder().getFolderMeta(folderToken).getBody();
