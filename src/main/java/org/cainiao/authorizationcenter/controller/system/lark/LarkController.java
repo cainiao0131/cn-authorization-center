@@ -9,11 +9,9 @@ import org.cainiao.api.lark.dto.request.docs.space.folder.ListItemsInFolderReque
 import org.cainiao.api.lark.dto.response.LarkDataResponse;
 import org.cainiao.api.lark.dto.response.LarkFile;
 import org.cainiao.api.lark.dto.response.LarkPage;
+import org.cainiao.api.lark.dto.response.docs.space.folder.LarkFolderMeta;
 import org.cainiao.api.lark.imperative.LarkApi;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <br />
@@ -48,5 +46,14 @@ public class LarkController {
                 .pageSize(pageSize)
                 .pageToken(pageToken)
                 .build()).getBody();
+    }
+
+    @GetMapping("/drive/explorer/v2/folder/{folderToken}/meta")
+    @Operation(summary = "根据 folderToken 获取该文件夹的元信息")
+    @HasScope({"lark"})
+    public LarkDataResponse<LarkFolderMeta> listItemsInFolder(
+        @Parameter(description = "文件夹Token") @PathVariable("folderToken") String folderToken) {
+
+        return larkApi.docs().space().folder().getFolderMeta(folderToken).getBody();
     }
 }
