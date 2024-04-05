@@ -1,7 +1,5 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client.userinfoendpoint;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.cainiao.authorizationcenter.service.UserService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
@@ -20,8 +18,6 @@ import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
-import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
@@ -39,9 +35,6 @@ import java.util.*;
 public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserService userService;
-    private final RequestCache requestCache;
-    private final HttpServletRequest httpServletRequest;
-    private final HttpServletResponse httpServletResponse;
 
     private static final String MISSING_USER_INFO_URI_ERROR_CODE = "missing_user_info_uri";
 
@@ -59,16 +52,11 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
     private final RestOperations defaultRestOperations;
     private final Map<String, RestOperations> restOperationsRegistry = new HashMap<>();
 
-    public DynamicOAuth2UserService(UserService userService_, RequestCache requestCache_,
-                                    HttpServletRequest httpServletRequest_,
-                                    HttpServletResponse httpServletResponse_) {
+    public DynamicOAuth2UserService(UserService userService_) {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
         this.defaultRestOperations = restTemplate;
         this.userService = userService_;
-        this.requestCache = requestCache_;
-        this.httpServletRequest = httpServletRequest_;
-        this.httpServletResponse = httpServletResponse_;
     }
 
     public DynamicOAuth2UserService registerRestOperations(String registrationId, RestOperations restOperations) {
@@ -101,6 +89,8 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
         RequestEntity<?> request = this.requestEntityConverter.convert(userRequest);
         ResponseEntity<Map<String, Object>> response = getResponse(userRequest, request);
         Map<String, Object> userAttributes = response.getBody();
+        Assert.notNull(userAttributes, "userAttributes cannot be null");
+
         Set<GrantedAuthority> authorities = new LinkedHashSet<>();
         authorities.add(new OAuth2UserAuthority(userAttributes));
         OAuth2AccessToken token = userRequest.getAccessToken();
@@ -109,22 +99,24 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
         }
 
         /*
-         * 为了让之后【应用】调用【授权中心】的 OIDC 接口，通过 ID Token 换取 user_info 时
-         * ID Token 中的主体名称（"sub"）的值就是【系统用户 ID】
-         * 因此必须在这里构建 DefaultOAuth2User 时，就要让 userNameAttributeName 对应的值是【系统用户 ID】
-         * 因此用户第一次使用某【系统】时，为其构建【系统用户 ID】的步骤要提前到这里来
-         * 但这里处于的是【登录平台】的安全上下文，上下文中没有【应用】OAuth2 登录的信息
-         * 因此必须从 SavedRequest 中获取【应用】的 clientId，因为【登录平台】成功后重放的是【应用】OAuth2 登录流程
+         * 用户首次通过三方登录平台，自动注册平台用户
+         * 为了能够让多个【应用】同时登录
+         * 之后【应用】调用【授权中心】的 OIDC 接口，通过 ID Token 换取 user_info 时
+         * ID Token 中的主体名称（"sub"）的值必须是【平台用户 ID】
+         * 因此必须在这里构建 DefaultOAuth2User 时，就要让 userNameAttributeName 对应的值是【平台用户 ID】
+         * createIfFirstLogin() 中会将获取到的【平台用户 ID】设置为 cn_user_id 属性
+         * 将【授权服务器】的数据库中的 oauth2_client_registration 的 user_name_attribute_name 配置为 cn_user_id
+         *
+         * 这里的 OAuth2UserService#loadUser() 只会在用户登录【授权服务器】时调用
+         * 当用户通过某个【应用】登录【授权服务器】后，进入另外一个【应用】时，由于【授权服务器】处于已登录状态，因此不会调用此方法
+         * 因此 ” 用户第一次使用某【系统】时，为其构建【系统用户 ID】等步骤 “ 不能在这里执行
+         * 否则所有【应用】看到的【系统用户 ID】都是第一次登录的那个【应用】所属的【系统用户 ID】
+         * 与【租户】【系统】相关的用户 ID 的首次生成与查询设置等逻辑，需放到【应用】通过 ID Token 换 user info 的端点
+         * 也就是 DynamicOidcUserInfoMapper#getClaimsRequestedByScope() 方法中
          */
-        SavedRequest savedRequest = this.requestCache.getRequest(httpServletRequest, httpServletResponse);
-        String[] clientIdInfo = savedRequest.getParameterValues("client_id");
-        if (clientIdInfo != null && clientIdInfo.length > 0) {
-            // 用户首次通过三方登录平台，自动注册平台用户，设置【系统用户 ID】、【租户 ID】
-            userService.createIfFirstLogin(clientIdInfo[0], userRequest, userAttributes);
-        }
+        userService.createIfFirstLogin(userRequest, userAttributes);
 
-        return new DefaultOAuth2User(authorities,
-            Optional.ofNullable(userAttributes).orElse(new HashMap<>()), userNameAttributeName);
+        return new DefaultOAuth2User(authorities, userAttributes, userNameAttributeName);
     }
 
     private ResponseEntity<Map<String, Object>> getResponse(OAuth2UserRequest userRequest, RequestEntity<?> request) {

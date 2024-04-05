@@ -3,11 +3,8 @@ package org.cainiao.authorizationcenter.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.cainiao.authorizationcenter.dao.repository.acl.user.LarkUserRepository;
 import org.cainiao.authorizationcenter.dao.repository.acl.user.UserRepository;
-import org.cainiao.authorizationcenter.entity.acl.technology.SystemUser;
 import org.cainiao.authorizationcenter.entity.acl.user.LarkUser;
 import org.cainiao.authorizationcenter.entity.acl.user.User;
-import org.cainiao.authorizationcenter.service.SystemUserService;
-import org.cainiao.authorizationcenter.service.TenantUserService;
 import org.cainiao.authorizationcenter.service.UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.stereotype.Service;
@@ -31,21 +28,17 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final LarkUserRepository larkUserRepository;
-    private final SystemUserService systemUserService;
-    private final TenantUserService tenantUserService;
 
     @Override
     @Transactional
-    public void createIfFirstLogin(String clientId, OAuth2UserRequest userRequest, Map<String, Object> userAttributes) {
+    public void createIfFirstLogin(OAuth2UserRequest userRequest, Map<String, Object> userAttributes) {
         // 平台用户 ID
         long cnUserId = -1;
         if (LARK_REGISTRATION_ID.equals(userRequest.getClientRegistration().getRegistrationId())) {
             // 通过【飞书】登录【平台】
             cnUserId = createIfFirstLarkLogin(userAttributes);
         }
-        SystemUser systemUser = systemUserService.createIfFirstUse(cnUserId, clientId);
-        tenantUserService.createIfFirstUse(cnUserId, systemUser.getSystemId());
-        userAttributes.put("system_user_id", systemUser.getSystemUserId());
+        userAttributes.put("cn_user_id", cnUserId);
     }
 
     private long createIfFirstLarkLogin(Map<String, Object> userAttributes) {

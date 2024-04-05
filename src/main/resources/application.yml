@@ -62,7 +62,7 @@ logging:
     name: ${user.home}/logs/${spring.application.name}.log
     path: ${user.home}/logs
   level:
-    "[cn.cainiao]": debug
+    "[org.cainiao]": debug
     "[org.apache.logging]": off
     "[io.swagger]": off
     # 测试用 trace
@@ -108,7 +108,7 @@ management:
 springdoc:
   customer:
     theme: feeling-blue
-    title:  授权中心
+    title: 授权中心
     url: https://abc
     config-url: /v3/api-docs/swagger-config
   server:

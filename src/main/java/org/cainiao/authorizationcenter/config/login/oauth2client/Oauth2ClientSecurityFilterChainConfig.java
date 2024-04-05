@@ -1,7 +1,5 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.cainiao.api.lark.imperative.LarkApi;
 import org.cainiao.authorizationcenter.config.login.oauth2client.httpclient.lark.LarkMapOAuth2AccessTokenResponseConverter;
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.DynamicAuthorizationCodeTokenResponseClient;
@@ -68,9 +66,6 @@ public class Oauth2ClientSecurityFilterChainConfig {
                                                      ClientRegistrationRepository clientRegistrationRepository,
                                                      LarkApi larkApi,
                                                      UserService userService,
-                                                     RequestCache requestCache,
-                                                     HttpServletRequest httpServletRequest,
-                                                     HttpServletResponse httpServletResponse,
                                                      CNOAuth2ClientProperties properties) throws Exception {
         RestOperations larkRestTemplate = getLarkRestOperations();
 
@@ -90,7 +85,7 @@ public class Oauth2ClientSecurityFilterChainConfig {
                         .registerRestOperations(LARK_REGISTRATION_ID, larkRestTemplate)))
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                     // OAuth2UserService 可以通过 @Bean 进行自定义，这里为了不影响其它 FilterChain，直接构造
-                    .userService(new DynamicOAuth2UserService(userService, requestCache, httpServletRequest, httpServletResponse)
+                    .userService(new DynamicOAuth2UserService(userService)
                         .registerRestOperations(LARK_REGISTRATION_ID, larkRestTemplate))))
             .oauth2Client(withDefaults());
         if (properties.isForceHttps()) {

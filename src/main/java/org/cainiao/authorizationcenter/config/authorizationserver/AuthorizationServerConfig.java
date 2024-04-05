@@ -6,6 +6,8 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.cainiao.authorizationcenter.service.RegisteredClientService;
+import org.cainiao.authorizationcenter.service.SystemUserService;
+import org.cainiao.authorizationcenter.service.TenantUserService;
 import org.cainiao.oauth2.client.core.filter.ForceHttpsPortAndSchemeFilter;
 import org.cainiao.oauth2.client.core.properties.CNOAuth2ClientProperties;
 import org.springframework.context.annotation.Bean;
@@ -48,13 +50,15 @@ public class AuthorizationServerConfig {
     @Bean
     @Order(AUTHORIZATION_SERVER_PRECEDENCE)
     SecurityFilterChain authorizationServerFilterChain(HttpSecurity http,
-                                                       CNOAuth2ClientProperties properties) throws Exception {
+                                                       CNOAuth2ClientProperties properties,
+                                                       SystemUserService systemUserService,
+                                                       TenantUserService tenantUserService) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
             // 启用 OpenID Connect 1.0
             .oidc(oidcConfigurer -> oidcConfigurer
                 .userInfoEndpoint(oidcUserInfoEndpointConfigurer -> oidcUserInfoEndpointConfigurer
-                    .userInfoMapper(new DynamicOidcUserInfoMapper())));
+                    .userInfoMapper(new DynamicOidcUserInfoMapper(systemUserService, tenantUserService))));
         // OidcUserInfoEndpointConfigurer
         http
             // Accept access tokens for User Info and/or Client Registration
