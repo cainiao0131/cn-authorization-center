@@ -32,6 +32,7 @@ public class HttpClientConfig {
         Map<String, Set<String>> registrationIdUrisMap = new HashMap<>();
         Set<String> uris = new HashSet<>();
         uris.add("drive");
+        uris.add("docx");
         registrationIdUrisMap.put("cn-lark-client", uris); // 飞书
         return WebClient.builder().filter(new DynamicExchangeFilterFunction("https://open.feishu.cn/open-apis",
                 oAuth2AuthorizedClientManager, registrationIdUrisMap))
