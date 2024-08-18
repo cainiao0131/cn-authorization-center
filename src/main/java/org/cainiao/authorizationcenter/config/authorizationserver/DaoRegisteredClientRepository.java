@@ -1,7 +1,7 @@
 package org.cainiao.authorizationcenter.config.authorizationserver;
 
 import lombok.RequiredArgsConstructor;
-import org.cainiao.authorizationcenter.entity.authorizationserver.JpaRegisteredClient;
+import org.cainiao.authorizationcenter.entity.authorizationserver.CnRegisteredClient;
 import org.cainiao.authorizationcenter.service.RegisteredClientService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -21,26 +21,26 @@ public class DaoRegisteredClientRepository implements RegisteredClientRepository
     public void save(RegisteredClient registeredClient) {
         Assert.notNull(registeredClient, "registeredClient cannot be null");
 
-        JpaRegisteredClient jpaRegisteredClient = JpaRegisteredClient.from(registeredClient);
+        CnRegisteredClient cnRegisteredClient = CnRegisteredClient.from(registeredClient);
 
-        JpaRegisteredClient oldOne = registeredClientService.findById(registeredClient.getId());
+        CnRegisteredClient oldOne = registeredClientService.findById(registeredClient.getId());
         if (oldOne == null) {
-            assertUniqueIdentifiers(jpaRegisteredClient);
+            assertUniqueIdentifiers(cnRegisteredClient);
         } else {
-            jpaRegisteredClient.setClientId(oldOne.getClientId()); // do not update client_id
-            jpaRegisteredClient.setClientIdIssuedAt(oldOne.getClientIdIssuedAt()); // do not update client_id_issued_at
+            cnRegisteredClient.setClientId(oldOne.getClientId()); // do not update client_id
+            cnRegisteredClient.setClientIdIssuedAt(oldOne.getClientIdIssuedAt()); // do not update client_id_issued_at
         }
-        registeredClientService.save(jpaRegisteredClient);
+        registeredClientService.save(cnRegisteredClient);
     }
 
-    private void assertUniqueIdentifiers(JpaRegisteredClient jpaRegisteredClient) {
-        if (registeredClientService.existsByClientId(jpaRegisteredClient)) {
+    private void assertUniqueIdentifiers(CnRegisteredClient cnRegisteredClient) {
+        if (registeredClientService.existsByClientId(cnRegisteredClient)) {
             throw new IllegalArgumentException("Registered client must be unique. " +
-                "Found duplicate client identifier: " + jpaRegisteredClient.getClientId());
+                "Found duplicate client identifier: " + cnRegisteredClient.getClientId());
         }
-        if (registeredClientService.existsByClientSecret(jpaRegisteredClient)) {
+        if (registeredClientService.existsByClientSecret(cnRegisteredClient)) {
             throw new IllegalArgumentException("Registered client must be unique. " +
-                "Found duplicate client secret for identifier: " + jpaRegisteredClient.getId());
+                "Found duplicate client secret for identifier: " + cnRegisteredClient.getId());
         }
     }
 

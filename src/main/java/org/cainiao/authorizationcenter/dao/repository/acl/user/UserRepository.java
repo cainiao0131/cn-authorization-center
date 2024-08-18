@@ -1,6 +1,6 @@
 package org.cainiao.authorizationcenter.dao.repository.acl.user;
 
-import org.cainiao.authorizationcenter.entity.acl.user.User;
+import org.cainiao.authorizationcenter.entity.acl.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

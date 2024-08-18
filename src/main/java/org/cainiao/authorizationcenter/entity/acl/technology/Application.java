@@ -1,7 +1,9 @@
 package org.cainiao.authorizationcenter.entity.acl.technology;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,25 +17,23 @@ import java.io.Serial;
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
-@Entity(name = "t_application")
-@NoArgsConstructor
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
+@TableName("t_application")
+@Schema(name = "Application", description = "应用")
 public class Application extends IdBaseEntity {
 
     @Serial
     private static final long serialVersionUID = -4505057660743337320L;
 
-    /**
-     * 所属系统ID
-     */
-    @Column(name = "app_system_id", nullable = false)
+    @TableField("app_system_id")
+    @Schema(description = "所属系统 ID")
     private long systemId;
 
-    /**
-     * 应用名称
-     */
-    @Column(name = "app_name", nullable = false, unique = true)
+    @TableField("app_name")
+    @Schema(description = "应用名称")
     private String name;
 }

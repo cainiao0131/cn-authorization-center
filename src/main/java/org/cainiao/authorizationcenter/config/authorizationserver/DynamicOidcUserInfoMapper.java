@@ -1,7 +1,7 @@
 package org.cainiao.authorizationcenter.config.authorizationserver;
 
 import lombok.RequiredArgsConstructor;
-import org.cainiao.authorizationcenter.entity.acl.technology.SystemUser;
+import org.cainiao.authorizationcenter.entity.acl.technology.ClientUser;
 import org.cainiao.authorizationcenter.service.SystemUserService;
 import org.cainiao.authorizationcenter.service.TenantUserService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -96,9 +96,9 @@ public class DynamicOidcUserInfoMapper implements Function<OidcUserInfoAuthentic
          * 也就是这里的 DynamicOidcUserInfoMapper#getClaimsRequestedByScope() 方法中
          */
         // 用户首次通过三方登录平台，自动设置【系统用户 ID】、【租户 ID】
-        SystemUser systemUser = systemUserService.createIfFirstUse(cnUserId, oAuth2AuthorizationRequest.getClientId());
-        tenantUserService.createIfFirstUse(cnUserId, systemUser.getSystemId());
-        principalAttributes.put("system_user_id", systemUser.getSystemUserId());
+        ClientUser clientUser = systemUserService.createIfFirstUse(cnUserId, oAuth2AuthorizationRequest.getClientId());
+        tenantUserService.createIfFirstUse(cnUserId, clientUser.getSystemId());
+        principalAttributes.put("system_user_id", clientUser.getSystemUserId());
 
         OAuth2AccessToken accessToken = authenticationContext.getAccessToken();
         Map<String, Object> scopeRequestedClaims = getClaimsRequestedByScope(principalAttributes,

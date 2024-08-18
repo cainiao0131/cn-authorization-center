@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.cainiao</groupId>
         <artifactId>cn-application-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.4</version>
     </parent>
 
     <artifactId>cn-authorization-center</artifactId>
@@ -51,11 +51,6 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
         <dependency>

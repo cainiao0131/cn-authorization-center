@@ -43,6 +43,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class AuthorizationServerConfig {
 
     /**
+     * 见：@ConditionalOnDefaultWebSecurity
      * 如果没有 SecurityFilterChain @Bean
      * OAuth2AuthorizationServerAutoConfiguration @Import 的 OAuth2AuthorizationServerWebSecurityConfiguration
      * 会自动配置一个优先级为 @Order(Ordered.HIGHEST_PRECEDENCE) 的 SecurityFilterChain

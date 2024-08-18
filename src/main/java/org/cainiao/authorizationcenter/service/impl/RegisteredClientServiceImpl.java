@@ -1,9 +1,10 @@
 package org.cainiao.authorizationcenter.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.cainiao.authorizationcenter.dao.repository.JpaRegisteredClientRepository;
-import org.cainiao.authorizationcenter.entity.authorizationserver.JpaRegisteredClient;
+import org.cainiao.authorizationcenter.dao.service.CnRegisteredClientMapperService;
+import org.cainiao.authorizationcenter.entity.authorizationserver.CnRegisteredClient;
 import org.cainiao.authorizationcenter.service.RegisteredClientService;
+import org.cainiao.common.exception.BusinessException;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.stereotype.Service;
 
@@ -16,37 +17,46 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RegisteredClientServiceImpl implements RegisteredClientService {
 
-    private final JpaRegisteredClientRepository jpaRegisteredClientRepository;
+    private final CnRegisteredClientMapperService cnRegisteredClientMapperService;
 
     @Override
-    public JpaRegisteredClient findById(String id) {
-        return jpaRegisteredClientRepository.findByRegisteredClientId(id).orElse(null);
+    public CnRegisteredClient findById(String id) {
+        return cnRegisteredClientMapperService.findByRegisteredClientId(id);
     }
 
     @Override
     public RegisteredClient findRegisteredClientById(String id) {
-        return jpaRegisteredClientRepository.findByRegisteredClientId(id)
-            .map(JpaRegisteredClient::toRegisteredClient).orElse(null);
+        CnRegisteredClient cnRegisteredClient = cnRegisteredClientMapperService.findByRegisteredClientId(id);
+        if (cnRegisteredClient == null) {
+            return null;
+        }
+        return cnRegisteredClient.toRegisteredClient();
     }
 
     @Override
     public RegisteredClient findRegisteredClientByClientId(String clientId) {
-        return jpaRegisteredClientRepository.findByClientId(clientId)
-            .map(JpaRegisteredClient::toRegisteredClient).orElse(null);
+        CnRegisteredClient cnRegisteredClient = cnRegisteredClientMapperService.findByClientId(clientId);
+        if (cnRegisteredClient == null) {
+            return null;
+        }
+        return cnRegisteredClient.toRegisteredClient();
     }
 
     @Override
-    public boolean existsByClientId(JpaRegisteredClient jpaRegisteredClient) {
-        return jpaRegisteredClientRepository.existsByClientId(jpaRegisteredClient.getClientId());
+    public boolean existsByClientId(CnRegisteredClient cnRegisteredClient) {
+        return cnRegisteredClientMapperService.existsByClientId(cnRegisteredClient.getClientId());
     }
 
     @Override
-    public boolean existsByClientSecret(JpaRegisteredClient jpaRegisteredClient) {
-        return jpaRegisteredClientRepository.existsByClientSecret(jpaRegisteredClient.getClientSecret());
+    public boolean existsByClientSecret(CnRegisteredClient cnRegisteredClient) {
+        return cnRegisteredClientMapperService.existsByClientSecret(cnRegisteredClient.getClientSecret());
     }
 
     @Override
-    public JpaRegisteredClient save(JpaRegisteredClient jpaRegisteredClient) {
-        return jpaRegisteredClientRepository.save(jpaRegisteredClient);
+    public CnRegisteredClient save(CnRegisteredClient cnRegisteredClient) {
+        if (!cnRegisteredClientMapperService.save(cnRegisteredClient)) {
+            throw new BusinessException("save CnRegisteredClient fail");
+        }
+        return cnRegisteredClient;
     }
 }

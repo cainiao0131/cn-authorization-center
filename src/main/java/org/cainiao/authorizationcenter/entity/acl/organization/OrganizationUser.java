@@ -13,7 +13,7 @@ import org.cainiao.common.entity.IdBaseEntity;
 import java.io.Serial;
 
 /**
- * <br />
+ * 机构下有哪些用户<br />
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
@@ -22,14 +22,18 @@ import java.io.Serial;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("t_tenant")
-@Schema(name = "Tenant", description = "租户")
-public class Tenant extends IdBaseEntity {
+@TableName("t_organization_user")
+@Schema(name = "OrganizationUser", description = "机构用户")
+public class OrganizationUser extends IdBaseEntity {
 
     @Serial
-    private static final long serialVersionUID = -8073685222904689538L;
+    private static final long serialVersionUID = 3379428676742293336L;
     
-    @TableField("ten_name")
-    @Schema(description = "租户名称")
-    private String name;
+    @TableField("ou_organization_id")
+    @Schema(description = "机构 ID")
+    private long organizationId;
+
+    @TableField("ou_user_id")
+    @Schema(description = "用户 ID")
+    private long userId;
 }

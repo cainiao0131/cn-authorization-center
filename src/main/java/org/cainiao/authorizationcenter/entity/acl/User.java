@@ -1,6 +1,5 @@
-package org.cainiao.authorizationcenter.entity.acl.organization;
+package org.cainiao.authorizationcenter.entity.acl;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -22,14 +21,10 @@ import java.io.Serial;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("t_tenant")
-@Schema(name = "Tenant", description = "租户")
-public class Tenant extends IdBaseEntity {
+@TableName("t_user")
+@Schema(name = "User", description = "用户")
+public class User extends IdBaseEntity {
 
     @Serial
-    private static final long serialVersionUID = -8073685222904689538L;
-    
-    @TableField("ten_name")
-    @Schema(description = "租户名称")
-    private String name;
+    private static final long serialVersionUID = -9195043410851951317L;
 }

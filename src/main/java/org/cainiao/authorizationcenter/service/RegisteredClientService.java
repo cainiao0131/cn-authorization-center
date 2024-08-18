@@ -1,6 +1,6 @@
 package org.cainiao.authorizationcenter.service;
 
-import org.cainiao.authorizationcenter.entity.authorizationserver.JpaRegisteredClient;
+import org.cainiao.authorizationcenter.entity.authorizationserver.CnRegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 
 /**
@@ -10,15 +10,15 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
  */
 public interface RegisteredClientService {
 
-    JpaRegisteredClient findById(String registeredClientId);
+    CnRegisteredClient findById(String registeredClientId);
 
     RegisteredClient findRegisteredClientById(String id);
 
     RegisteredClient findRegisteredClientByClientId(String clientId);
 
-    boolean existsByClientId(JpaRegisteredClient jpaRegisteredClient);
+    boolean existsByClientId(CnRegisteredClient cnRegisteredClient);
 
-    boolean existsByClientSecret(JpaRegisteredClient jpaRegisteredClient);
+    boolean existsByClientSecret(CnRegisteredClient cnRegisteredClient);
 
-    JpaRegisteredClient save(JpaRegisteredClient jpaRegisteredClient);
+    CnRegisteredClient save(CnRegisteredClient cnRegisteredClient);
 }

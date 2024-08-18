@@ -1,6 +1,6 @@
 package org.cainiao.authorizationcenter.service;
 
-import org.cainiao.authorizationcenter.entity.acl.technology.SystemUser;
+import org.cainiao.authorizationcenter.entity.acl.technology.ClientUser;
 
 /**
  * <br />
@@ -18,5 +18,5 @@ public interface SystemUserService {
      * @param registeredClientId OAuth2 客户端 ID
      * @return 系统用户
      */
-    SystemUser createIfFirstUse(long userId, String clientId);
+    ClientUser createIfFirstUse(long userId, String clientId);
 }
