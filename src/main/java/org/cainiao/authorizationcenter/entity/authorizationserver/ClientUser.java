@@ -1,4 +1,4 @@
-package org.cainiao.authorizationcenter.entity.acl.technology;
+package org.cainiao.authorizationcenter.entity.authorizationserver;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;

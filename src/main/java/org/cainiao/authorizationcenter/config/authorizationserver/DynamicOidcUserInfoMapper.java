@@ -1,8 +1,8 @@
 package org.cainiao.authorizationcenter.config.authorizationserver;
 
 import lombok.RequiredArgsConstructor;
-import org.cainiao.authorizationcenter.entity.acl.technology.ClientUser;
-import org.cainiao.authorizationcenter.service.SystemUserService;
+import org.cainiao.authorizationcenter.entity.authorizationserver.ClientUser;
+import org.cainiao.authorizationcenter.service.ClientUserService;
 import org.cainiao.authorizationcenter.service.TenantUserService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -36,7 +36,7 @@ import static org.cainiao.common.util.MapUtil.CnMap;
 @RequiredArgsConstructor
 public class DynamicOidcUserInfoMapper implements Function<OidcUserInfoAuthenticationContext, OidcUserInfo> {
 
-    private final SystemUserService systemUserService;
+    private final ClientUserService clientUserService;
     private final TenantUserService tenantUserService;
 
     private static final List<String> EMAIL_CLAIMS = Arrays.asList(
@@ -88,15 +88,15 @@ public class DynamicOidcUserInfoMapper implements Function<OidcUserInfoAuthentic
             .getByReflect(OAuth2AuthorizationRequest.class.getName(), OAuth2AuthorizationRequest.class);
         long cnUserId = Long.parseLong(authorization.getPrincipalName());
         /*
+         * 授权服务器作为【三方（如飞书）】的 OAuth2 客户端进行【三方】登录期间，用 OAuth2UserService#loadUser() 获取用户在【三方】的用户信息
          * OAuth2UserService#loadUser() 只会在用户登录【授权服务器】时调用
-         * 当用户通过某个【应用】登录【授权服务器】后，进入另外一个【应用】时，由于【授权服务器】处于已登录状态，因此不会再调用 OAuth2UserService#loadUser()
-         * 因此 ” 用户第一次使用某【系统】时，为其构建【系统用户 ID】等步骤 “ 不能在 OAuth2UserService#loadUser() 中执行
-         * 否则所有【应用】看到的【系统用户 ID】都是第一次登录的那个【应用】所属的【系统用户 ID】
-         * 与【租户】【系统】相关的用户 ID 的首次生成与查询设置等逻辑，需放到【应用】通过 ID Token 换 user info 的端点
+         * 用户在【授权服务器】的会话未失效时，通过另一个未登录的【授权服务器 OAuth2 客户端】登录时，不会再调用 OAuth2UserService#loadUser()
+         * 因此 ” 用户第一次访问某【授权服务器 OAuth2 客户端】时，为其生成【openId】 “ 不能在 OAuth2UserService#loadUser() 中执行
+         * 在【授权服务器 OAuth2 客户端】通过 ID Token 换 user info 的端点完成
          * 也就是这里的 DynamicOidcUserInfoMapper#getClaimsRequestedByScope() 方法中
          */
         // 用户首次通过三方登录平台，自动设置【系统用户 ID】、【租户 ID】
-        ClientUser clientUser = systemUserService.createIfFirstUse(cnUserId, oAuth2AuthorizationRequest.getClientId());
+        ClientUser clientUser = clientUserService.createIfFirstUse(cnUserId, oAuth2AuthorizationRequest.getClientId());
         tenantUserService.createIfFirstUse(cnUserId, clientUser.getSystemId());
         principalAttributes.put("system_user_id", clientUser.getSystemUserId());
 
