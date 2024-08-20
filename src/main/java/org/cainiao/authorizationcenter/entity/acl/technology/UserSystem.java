@@ -13,7 +13,7 @@ import org.cainiao.common.dao.IdBaseEntity;
 import java.io.Serial;
 
 /**
- * TODO 考虑创建一个授权中心的库，将部分 OAuth2 Client 不用的类移过去<br />
+ * 用户可以访问哪些系统<br />
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
@@ -22,18 +22,18 @@ import java.io.Serial;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("t_application")
-@Schema(name = "Application", description = "应用")
-public class Application extends IdBaseEntity {
+@TableName("t_user_system")
+@Schema(name = "UserSystem", description = "用户系统")
+public class UserSystem extends IdBaseEntity {
 
     @Serial
-    private static final long serialVersionUID = -4505057660743337320L;
+    private static final long serialVersionUID = 678543534836422010L;
 
-    @TableField("app_system_id")
-    @Schema(description = "所属系统 ID")
+    @TableField("us_user_id")
+    @Schema(description = "用户 ID")
+    private long userId;
+
+    @TableField("us_system_id")
+    @Schema(description = "系统 ID")
     private long systemId;
-
-    @TableField("app_name")
-    @Schema(description = "应用名称")
-    private String name;
 }

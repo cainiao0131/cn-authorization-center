@@ -3,7 +3,6 @@ package org.cainiao.authorizationcenter.config.authorizationserver;
 import lombok.RequiredArgsConstructor;
 import org.cainiao.authorizationcenter.entity.authorizationserver.ClientUser;
 import org.cainiao.authorizationcenter.service.ClientUserService;
-import org.cainiao.authorizationcenter.service.TenantUserService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
@@ -37,7 +36,6 @@ import static org.cainiao.common.util.MapUtil.CnMap;
 public class DynamicOidcUserInfoMapper implements Function<OidcUserInfoAuthenticationContext, OidcUserInfo> {
 
     private final ClientUserService clientUserService;
-    private final TenantUserService tenantUserService;
 
     private static final List<String> EMAIL_CLAIMS = Arrays.asList(
         StandardClaimNames.EMAIL,
@@ -92,13 +90,11 @@ public class DynamicOidcUserInfoMapper implements Function<OidcUserInfoAuthentic
          * OAuth2UserService#loadUser() 只会在用户登录【授权服务器】时调用
          * 用户在【授权服务器】的会话未失效时，通过另一个未登录的【授权服务器 OAuth2 客户端】登录时，不会再调用 OAuth2UserService#loadUser()
          * 因此 ” 用户第一次访问某【授权服务器 OAuth2 客户端】时，为其生成【openId】 “ 不能在 OAuth2UserService#loadUser() 中执行
-         * 在【授权服务器 OAuth2 客户端】通过 ID Token 换 user info 的端点完成
+         * 而要在【授权服务器 OAuth2 客户端】通过 ID Token 换 user info 的端点完成
          * 也就是这里的 DynamicOidcUserInfoMapper#getClaimsRequestedByScope() 方法中
          */
-        // 用户首次通过三方登录平台，自动设置【系统用户 ID】、【租户 ID】
         ClientUser clientUser = clientUserService.createIfFirstUse(cnUserId, oAuth2AuthorizationRequest.getClientId());
-        tenantUserService.createIfFirstUse(cnUserId, clientUser.getSystemId());
-        principalAttributes.put("system_user_id", clientUser.getSystemUserId());
+        principalAttributes.put("cn_open_id", clientUser.getOpenId());
 
         OAuth2AccessToken accessToken = authenticationContext.getAccessToken();
         Map<String, Object> scopeRequestedClaims = getClaimsRequestedByScope(principalAttributes,
@@ -111,15 +107,19 @@ public class DynamicOidcUserInfoMapper implements Function<OidcUserInfoAuthentic
                                                                  Set<String> requestedScopes) {
         Set<String> scopeRequestedClaimNames = new HashSet<>(32);
         /*
-         * sub 表示 subject，主体名称，必须与 ID Token 的 Name 相同，因为 OAuth2 客户端会校验，如不同客户端会登录失败
-         * 但客户端真正需要的用户标识是 system_user_id
-         * 但为了能够同时让多个【应用】通过【授权服务器】登录，sub 必须是【平台用户 ID】即 cn_user_id，而不能是【系统用户 ID】 system_user_id
-         * 否则同时登录的【应用】有不同的 system_user_id，授权服务器的主体名称就不知道以哪个应用为准了
-         * 应该将【应用】的 OAuth2 数据库中 oauth2_client_registration 的 user_name_attribute_name 配置为 system_user_id
-         * 这样【应用】构建主体时，主体名称就会使用 system_user_id 了
+         * sub 表示 subject，主体名称，必须与 ID Token 的 Name 相同
+         * 因为在 OIDC 登录过程中，ID Token 换用户信息时，OAuth2 客户端会校验，如不同客户端会抛异常，登录失败
+         * 当用户已经用某个【授权服务器 OAuth2 客户端】登录过一次，授权服务器会话还没有失效时
+         * 如果用户又访问另一个还没有会话的【授权服务器 OAuth2 客户端】，会重新走一遍 OIDC 登录流程
+         * 由于用户在不同的【授权服务器 OAuth2 客户端】的 cn_open_id 是不同的
+         * 因此不能用 cn_open_id 作为主体名称，应该用 cn_user_id 作为主体名称
+         *
+         * 但各个【授权服务器 OAuth2 客户端】应该用 cn_open_id 来标识用户，避免互相知道对方的用户标识造成安全问题
+         * 应该将【授权服务器 OAuth2 客户端】的 OAuth2 数据库中 oauth2_client_registration 的 user_name_attribute_name 配置为 cn_open_id
+         * 这样【授权服务器 OAuth2 客户端】构建主体时，主体名称就会使用 cn_open_id 了
          */
         scopeRequestedClaimNames.add(StandardClaimNames.SUB);
-        scopeRequestedClaimNames.add("system_user_id");
+        scopeRequestedClaimNames.add("cn_open_id");
 
         if (requestedScopes.contains(OidcScopes.ADDRESS)) {
             scopeRequestedClaimNames.add(StandardClaimNames.ADDRESS);

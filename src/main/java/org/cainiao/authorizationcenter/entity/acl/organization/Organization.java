@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.cainiao.common.entity.IdBaseEntity;
+import org.cainiao.common.dao.IdBaseEntity;
 
 import java.io.Serial;
 
@@ -25,7 +25,7 @@ import java.io.Serial;
 @TableName("t_organization")
 @Schema(name = "Organization", description = "机构树")
 public class Organization extends IdBaseEntity {
-    
+
     @Serial
     private static final long serialVersionUID = -1893076163803657124L;
 

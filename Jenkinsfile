@@ -4,7 +4,7 @@ pipeline {
       reuseNode 'true'
       registryUrl 'https://g-ziod8129-docker.pkg.coding.net'
       registryCredentialsId "${env.DOCKER_REGISTRY_CREDENTIALS_ID}"
-      image 'mysterious-forest/docker/cn-base-maven:3.8.4-openjdk-17'
+      image 'mysterious-forest/docker/cn-base-maven:3.8.4-openjdk-17-2'
     }
   }
   stages {

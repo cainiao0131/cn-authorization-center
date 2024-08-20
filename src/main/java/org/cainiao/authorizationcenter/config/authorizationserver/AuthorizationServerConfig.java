@@ -7,7 +7,6 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.cainiao.authorizationcenter.service.ClientUserService;
 import org.cainiao.authorizationcenter.service.RegisteredClientService;
-import org.cainiao.authorizationcenter.service.TenantUserService;
 import org.cainiao.oauth2.client.core.filter.ForceHttpsPortAndSchemeFilter;
 import org.cainiao.oauth2.client.core.properties.CNOAuth2ClientProperties;
 import org.springframework.context.annotation.Bean;
@@ -43,8 +42,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class AuthorizationServerConfig {
 
     /**
-     * 见：@ConditionalOnDefaultWebSecurity
-     * 如果没有 SecurityFilterChain @Bean
+     * 见：@ConditionalOnDefaultWebSecurity<br />
+     * 如果没有 SecurityFilterChain @Bean<br />
      * OAuth2AuthorizationServerAutoConfiguration @Import 的 OAuth2AuthorizationServerWebSecurityConfiguration
      * 会自动配置一个优先级为 @Order(Ordered.HIGHEST_PRECEDENCE) 的 SecurityFilterChain
      */
@@ -52,14 +51,13 @@ public class AuthorizationServerConfig {
     @Order(AUTHORIZATION_SERVER_PRECEDENCE)
     SecurityFilterChain authorizationServerFilterChain(HttpSecurity http,
                                                        CNOAuth2ClientProperties properties,
-                                                       ClientUserService clientUserService,
-                                                       TenantUserService tenantUserService) throws Exception {
+                                                       ClientUserService clientUserService) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
             // 启用 OpenID Connect 1.0
             .oidc(oidcConfigurer -> oidcConfigurer
                 .userInfoEndpoint(oidcUserInfoEndpointConfigurer -> oidcUserInfoEndpointConfigurer
-                    .userInfoMapper(new DynamicOidcUserInfoMapper(clientUserService, tenantUserService))));
+                    .userInfoMapper(new DynamicOidcUserInfoMapper(clientUserService))));
         // OidcUserInfoEndpointConfigurer
         http
             // Accept access tokens for User Info and/or Client Registration
@@ -82,7 +80,8 @@ public class AuthorizationServerConfig {
     }
 
     /**
-     * 如果没有 RegisteredClientRepository @Bean
+     * 见：@ConditionalOnDefaultWebSecurity<br />
+     * 如果没有 RegisteredClientRepository @Bean<br />
      * OAuth2AuthorizationServerAutoConfiguration @Import 的 OAuth2AuthorizationServerConfiguration 会根据
      * OAuth2AuthorizationServerProperties（spring.security.oauth2.authorizationserver）
      * 自动配置一个 InMemoryRegisteredClientRepository
@@ -123,7 +122,8 @@ public class AuthorizationServerConfig {
     }
 
     /**
-     * 如果没有 AuthorizationServerSettings @Bean
+     * 见：@ConditionalOnDefaultWebSecurity<br />
+     * 如果没有 AuthorizationServerSettings @Bean<br />
      * OAuth2AuthorizationServerAutoConfiguration @Import 的 OAuth2AuthorizationServerConfiguration 会根据
      * OAuth2AuthorizationServerProperties（spring.security.oauth2.authorizationserver）
      * 自动配置一个 AuthorizationServerSettings
@@ -135,14 +135,14 @@ public class AuthorizationServerConfig {
              * 发布者标识符（issuer identifier），如没有配置则会从当前请求中解析
              * 如果配置了，则 /.well-known/oauth-authorization-server 或 /.well-known/openid-configuration
              * 公布的所有端点会加上这个前缀
-             * 这里只能到域名，不能加 URI，否则会报错，因此无法用 URI 来区分授权服务器与客户端服务
-             * 另外本来授权服务器与客户端也不能在同一个域名，因为那样会导致会话互相干扰，所以应该为授权服务器设置一个单独的域名
+             * 这里只能到域名，不能加 URI，例如配置为 "https://auth.milin.website/abc"，则会报错，因此无法用 URI 来区分授权服务器与客户端
+             * 另外本来授权服务器与客户端也不能在同一个域，因为那样会导致会话互相干扰，所以应该为授权服务器设置一个单独的域
+             * 如果为了单点登录，需要授权服务器与客户端共用 Cookie，那么需要让会话 Cookie 的设置在二级域名下："milin.website"
              *
              * 这里虽然不配置 issuer 也会以请求时的域名为准，这样更灵活，可以兼容域名变化的情况
              * 但是，如果 TLS 终止是在更外层完成的，那么应用收到的是 HTTP 请求，这会导致自动生成的域名为 HTTP，导致问题
              */
-            .issuer("https://auth.mcainiaom.top")
+            .issuer("https://auth.milin.website")
             .build();
     }
-
 }

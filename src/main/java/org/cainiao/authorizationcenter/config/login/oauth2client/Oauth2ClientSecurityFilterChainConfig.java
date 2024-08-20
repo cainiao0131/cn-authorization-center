@@ -6,7 +6,7 @@ import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.D
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.lark.LarkOAuth2AuthorizationCodeGrantRequestEntityConverter;
 import org.cainiao.authorizationcenter.config.login.oauth2client.userinfoendpoint.DynamicOAuth2UserService;
 import org.cainiao.authorizationcenter.service.UserService;
-import org.cainiao.oauth2.client.core.dao.repository.JpaClientRegistrationRepository;
+import org.cainiao.oauth2.client.core.dao.service.CnClientRegistrationMapperService;
 import org.cainiao.oauth2.client.core.filter.ForceHttpsPortAndSchemeFilter;
 import org.cainiao.oauth2.client.core.properties.CNOAuth2ClientProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -102,8 +102,8 @@ public class Oauth2ClientSecurityFilterChainConfig {
      */
     @Bean
     ClientRegistrationRepository clientRegistrationRepository(
-        JpaClientRegistrationRepository jpaClientRegistrationRepository) {
-        return new DaoClientRegistrationRepository(jpaClientRegistrationRepository);
+        CnClientRegistrationMapperService cnClientRegistrationMapperService) {
+        return new DaoClientRegistrationRepository(cnClientRegistrationMapperService);
     }
 
     /**

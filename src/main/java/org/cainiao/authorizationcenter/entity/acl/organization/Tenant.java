@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.cainiao.common.entity.IdBaseEntity;
+import org.cainiao.common.dao.IdBaseEntity;
 
 import java.io.Serial;
 
@@ -28,7 +28,7 @@ public class Tenant extends IdBaseEntity {
 
     @Serial
     private static final long serialVersionUID = -8073685222904689538L;
-    
+
     @TableField("ten_name")
     @Schema(description = "租户名称")
     private String name;

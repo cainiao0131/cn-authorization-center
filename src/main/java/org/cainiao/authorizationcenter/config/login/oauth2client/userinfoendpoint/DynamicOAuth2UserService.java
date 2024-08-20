@@ -99,20 +99,13 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
         }
 
         /*
-         * 用户首次通过三方登录平台，自动注册平台用户
+         * 用户首次通过【三方（如飞书）】登录平台，自动创建平台用户
          * 为了能够让多个【应用】同时登录
          * 之后【应用】调用【授权中心】的 OIDC 接口，通过 ID Token 换取 user_info 时
          * ID Token 中的主体名称（"sub"）的值必须是【平台用户 ID】
          * 因此必须在这里构建 DefaultOAuth2User 时，就要让 userNameAttributeName 对应的值是【平台用户 ID】
          * createIfFirstLogin() 中会将获取到的【平台用户 ID】设置为 cn_user_id 属性
          * 将【授权服务器】的数据库中的 oauth2_client_registration 的 user_name_attribute_name 配置为 cn_user_id
-         *
-         * 这里的 OAuth2UserService#loadUser() 只会在用户登录【授权服务器】时调用
-         * 当用户通过某个【应用】登录【授权服务器】后，进入另外一个【应用】时，由于【授权服务器】处于已登录状态，因此不会调用此方法
-         * 因此 ” 用户第一次使用某【系统】时，为其构建【系统用户 ID】等步骤 “ 不能在这里执行
-         * 否则所有【应用】看到的【系统用户 ID】都是第一次登录的那个【应用】所属的【系统用户 ID】
-         * 与【租户】【系统】相关的用户 ID 的首次生成与查询设置等逻辑，需放到【应用】通过 ID Token 换 user info 的端点
-         * 也就是 DynamicOidcUserInfoMapper#getClaimsRequestedByScope() 方法中
          */
         userService.createIfFirstLogin(userRequest, userAttributes);
 

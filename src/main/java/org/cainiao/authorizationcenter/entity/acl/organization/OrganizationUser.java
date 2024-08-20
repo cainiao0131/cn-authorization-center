@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.cainiao.common.entity.IdBaseEntity;
+import org.cainiao.common.dao.IdBaseEntity;
 
 import java.io.Serial;
 
@@ -28,7 +28,7 @@ public class OrganizationUser extends IdBaseEntity {
 
     @Serial
     private static final long serialVersionUID = 3379428676742293336L;
-    
+
     @TableField("ou_organization_id")
     @Schema(description = "机构 ID")
     private long organizationId;

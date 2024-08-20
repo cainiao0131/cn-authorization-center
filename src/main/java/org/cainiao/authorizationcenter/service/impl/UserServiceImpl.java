@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
         String larkUserId = body.getString("user_id");
         LarkUser larkUser = larkUserMapperService.findByLarkUserId(larkUserId);
         if (larkUser != null) {
+            // 曾经用飞书登录过，则直接返回关联的【开放平台用户 ID】
             return larkUser.getUserId();
         }
         User user = User.builder().build();

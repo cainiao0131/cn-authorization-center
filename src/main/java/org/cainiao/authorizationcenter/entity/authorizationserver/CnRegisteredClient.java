@@ -12,7 +12,7 @@ import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.Au
 import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.ClientAuthenticationMethodSetTypeHandler;
 import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.ClientSettingsTypeHandler;
 import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.TokenSettingsTypeHandler;
-import org.cainiao.common.entity.IdBaseEntity;
+import org.cainiao.common.dao.IdBaseEntity;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -37,7 +37,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("t_oauth2_registered_client")
+@TableName("oauth2_registered_client")
 @Schema(name = "CnRegisteredClient", description = "注册的客户端")
 public class CnRegisteredClient extends IdBaseEntity {
 
@@ -53,6 +53,9 @@ public class CnRegisteredClient extends IdBaseEntity {
      */
     private String registeredClientId;
 
+    /**
+     * 主键，表内唯一
+     */
     private String clientId;
 
     private Instant clientIdIssuedAt;

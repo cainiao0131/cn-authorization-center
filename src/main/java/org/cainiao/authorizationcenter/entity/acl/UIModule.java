@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.cainiao.common.entity.IdBaseEntity;
+import org.cainiao.common.dao.IdBaseEntity;
 
 import java.io.Serial;
 

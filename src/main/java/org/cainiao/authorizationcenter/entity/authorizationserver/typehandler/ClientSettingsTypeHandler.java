@@ -1,21 +1,15 @@
 package org.cainiao.authorizationcenter.entity.authorizationserver.typehandler;
 
+import com.baomidou.mybatisplus.extension.handlers.AbstractJsonTypeHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.apache.ibatis.type.BaseTypeHandler;
-import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.MappedJdbcTypes;
-import org.apache.ibatis.type.MappedTypes;
 import org.cainiao.authorizationcenter.util.JsonUtil;
 import org.cainiao.common.exception.BusinessException;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
@@ -23,35 +17,18 @@ import java.util.Map;
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
-@MappedTypes({ClientSettings.class})
-@MappedJdbcTypes(JdbcType.VARCHAR)
-public class ClientSettingsTypeHandler extends BaseTypeHandler<ClientSettings> {
+public class ClientSettingsTypeHandler extends AbstractJsonTypeHandler<ClientSettings> {
 
-    @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, ClientSettings parameter, JdbcType jdbcType) throws SQLException {
-        try {
-            ps.setObject(i, JsonUtil.toJsonString(parameter.getSettings()));
-        } catch (JsonProcessingException e) {
-            throw new BusinessException("Error converting ClientSettings to JSON string", e);
-        }
+    public ClientSettingsTypeHandler(Class<?> type) {
+        super(type);
+    }
+
+    public ClientSettingsTypeHandler(Class<?> type, Field field) {
+        super(type, field);
     }
 
     @Override
-    public ClientSettings getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        return parseJson(rs.getString(columnName));
-    }
-
-    @Override
-    public ClientSettings getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        return parseJson(rs.getString(columnIndex));
-    }
-
-    @Override
-    public ClientSettings getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        return parseJson(cs.getString(columnIndex));
-    }
-
-    private ClientSettings parseJson(String jsonString) {
+    public ClientSettings parse(String jsonString) {
         if (!StringUtils.hasText(jsonString)) {
             return ClientSettings.builder().build();
         }
@@ -64,6 +41,15 @@ public class ClientSettingsTypeHandler extends BaseTypeHandler<ClientSettings> {
             return ClientSettings.withSettings(settings).build();
         } catch (IOException e) {
             throw new BusinessException("Error converting JSON string to ClientSettings", e);
+        }
+    }
+
+    @Override
+    public String toJson(ClientSettings clientSettings) {
+        try {
+            return JsonUtil.toJsonString(clientSettings.getSettings());
+        } catch (JsonProcessingException e) {
+            throw new BusinessException("Error converting ClientSettings to JSON string", e);
         }
     }
 }

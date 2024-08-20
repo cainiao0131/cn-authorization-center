@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.cainiao.common.entity.IdBaseEntity;
+import org.cainiao.common.dao.IdBaseEntity;
 
 import java.io.Serial;
 
@@ -29,7 +29,7 @@ public class ClientUser extends IdBaseEntity {
 
     @TableField("cu_client_id")
     @Schema(description = "OAuth2 客户端 ID")
-    private long clientId;
+    private String clientId;
 
     @TableField("cu_user_id")
     @Schema(description = "平台用户 ID")
