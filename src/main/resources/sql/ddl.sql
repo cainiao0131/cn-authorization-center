@@ -429,3 +429,39 @@ COMMENT ON COLUMN public.oauth2_registered_client.updated_by IS '最后更新人
 COMMENT ON COLUMN public.oauth2_registered_client.updated_at IS '最后更新时间';
 COMMENT ON COLUMN public.oauth2_registered_client.id IS '主键 ID';
 
+-- public.oauth2_client_registration definition
+
+CREATE TABLE IF NOT EXISTS public.oauth2_client_registration (
+	registration_id varchar NULL,
+	client_id varchar NULL,
+	client_secret varchar NULL,
+	authorization_grant_type text NULL,
+	client_name varchar NULL,
+	redirect_uri varchar NULL,
+	scopes text NULL,
+	client_authentication_method text NULL,
+	authorization_uri varchar NULL,
+	token_uri varchar NULL,
+	user_info_uri varchar NULL, -- 用户信息 URI
+	user_info_authentication_method text NULL, -- 用户信息鉴权方法
+	user_name_attribute_name varchar NULL,
+	jwk_set_uri varchar NULL,
+	issuer_uri varchar NULL,
+	configuration_metadata text NULL,
+	from_issuer_location boolean NULL,
+	created_by varchar NULL, -- 创建人
+	created_at timestamp DEFAULT now() NOT NULL, -- 创建时间
+	updated_by varchar NULL, -- 最后更新人
+	updated_at timestamp DEFAULT now() NOT NULL, -- 最后更新时间
+	id bigserial NOT NULL, -- 主键 ID
+	CONSTRAINT oauth2_client_registration_pk PRIMARY KEY (id)
+);
+
+COMMENT ON COLUMN public.oauth2_client_registration.user_info_uri IS '用户信息 URI';
+COMMENT ON COLUMN public.oauth2_client_registration.user_info_authentication_method IS '用户信息鉴权方法';
+COMMENT ON COLUMN public.oauth2_client_registration.created_by IS '创建人';
+COMMENT ON COLUMN public.oauth2_client_registration.created_at IS '创建时间';
+COMMENT ON COLUMN public.oauth2_client_registration.updated_by IS '最后更新人';
+COMMENT ON COLUMN public.oauth2_client_registration.updated_at IS '最后更新时间';
+COMMENT ON COLUMN public.oauth2_client_registration.id IS '主键 ID';
+

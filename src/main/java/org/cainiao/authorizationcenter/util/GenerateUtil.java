@@ -1,7 +1,10 @@
 package org.cainiao.authorizationcenter.util;
 
 import lombok.experimental.UtilityClass;
-import org.cainiao.common.dao.generator.DDLGenerator;
+import org.cainiao.authorizationcenter.entity.acl.User;
+import org.cainiao.authorizationcenter.entity.authorizationserver.ClientUser;
+import org.cainiao.common.util.DDLGenerator;
+import org.cainiao.oauth2.client.core.entity.CnClientRegistration;
 
 import java.io.IOException;
 
@@ -14,7 +17,8 @@ import java.io.IOException;
 public class GenerateUtil {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        DDLGenerator ddlGenerator = new DDLGenerator("org.cainiao.authorizationcenter.entity", "src/main/resources/sql/ddl.sql");
+        DDLGenerator ddlGenerator = DDLGenerator
+            .NEW("src/main/resources/sql/ddl.sql", User.class, ClientUser.class, CnClientRegistration.class);
         ddlGenerator.generateDDL();
     }
 }
