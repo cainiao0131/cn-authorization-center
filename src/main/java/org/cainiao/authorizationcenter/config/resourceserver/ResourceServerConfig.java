@@ -22,7 +22,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 public class ResourceServerConfig {
 
-    public static final RequestMatcher RESOURCE_SERVER_REQUEST_MATCHER = new AntPathRequestMatcher("/system/**");
+    public static final RequestMatcher RESOURCE_SERVER_REQUEST_MATCHER = new AntPathRequestMatcher("/tenant/**");
 
     @Bean
     @Order(RESOURCE_SERVER_PRECEDENCE)

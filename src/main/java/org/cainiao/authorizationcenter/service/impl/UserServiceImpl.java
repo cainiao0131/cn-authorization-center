@@ -7,7 +7,6 @@ import org.cainiao.authorizationcenter.entity.acl.LarkUser;
 import org.cainiao.authorizationcenter.entity.acl.User;
 import org.cainiao.authorizationcenter.service.UserService;
 import org.cainiao.common.exception.BusinessException;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -31,9 +30,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void createIfFirstLogin(OAuth2UserRequest userRequest, Map<String, Object> userAttributes) {
-        if (userRequest.getClientRegistration().getRegistrationId().equals(LARK_REGISTRATION_ID)) {
-            // 通过【飞书】登录【平台】，cn_user_id 为平台用户 ID
+    public void createIfFirstLogin(String registrationId, Map<String, Object> userAttributes) {
+        if (LARK_REGISTRATION_ID.equals(registrationId)) {
+            // 通过【飞书】登录【平台】，将 cn_user_id 设置为平台用户 ID
             userAttributes.put("cn_user_id", createIfFirstLarkLogin(userAttributes));
         } else {
             throw new BusinessException("非法登录方式");

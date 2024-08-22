@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequestEntityConverter;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -67,22 +68,23 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         Assert.notNull(userRequest, "userRequest cannot be null");
+        ClientRegistration clientRegistration = userRequest.getClientRegistration();
         if (!StringUtils
-            .hasText(userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri())) {
+            .hasText(clientRegistration.getProviderDetails().getUserInfoEndpoint().getUri())) {
             OAuth2Error oauth2Error = new OAuth2Error(MISSING_USER_INFO_URI_ERROR_CODE,
                 "Missing required UserInfo Uri in UserInfoEndpoint for Client Registration: "
-                    + userRequest.getClientRegistration().getRegistrationId(),
+                    + clientRegistration.getRegistrationId(),
                 null);
             throw new OAuth2AuthenticationException(oauth2Error, oauth2Error.toString());
         }
-        String userNameAttributeName = userRequest.getClientRegistration()
+        String userNameAttributeName = clientRegistration
             .getProviderDetails()
             .getUserInfoEndpoint()
             .getUserNameAttributeName();
         if (!StringUtils.hasText(userNameAttributeName)) {
             OAuth2Error oauth2Error = new OAuth2Error(MISSING_USER_NAME_ATTRIBUTE_ERROR_CODE,
                 "Missing required \"user name\" attribute name in UserInfoEndpoint for Client Registration: "
-                    + userRequest.getClientRegistration().getRegistrationId(),
+                    + clientRegistration.getRegistrationId(),
                 null);
             throw new OAuth2AuthenticationException(oauth2Error, oauth2Error.toString());
         }
@@ -107,7 +109,7 @@ public class DynamicOAuth2UserService implements OAuth2UserService<OAuth2UserReq
          * createIfFirstLogin() 中会将获取到的【平台用户 ID】设置为 cn_user_id 属性
          * 将【授权服务器】的数据库中的 oauth2_client_registration 的 user_name_attribute_name 配置为 cn_user_id
          */
-        userService.createIfFirstLogin(userRequest, userAttributes);
+        userService.createIfFirstLogin(clientRegistration.getRegistrationId(), userAttributes);
 
         return new DefaultOAuth2User(authorities, userAttributes, userNameAttributeName);
     }

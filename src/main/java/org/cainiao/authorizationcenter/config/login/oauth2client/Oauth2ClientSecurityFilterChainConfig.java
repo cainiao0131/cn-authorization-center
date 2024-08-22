@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.cainiao.authorizationcenter.config.FilterChainOrder.OAUTH2_CLIENT_LOGIN_PRECEDENCE;
 import static org.cainiao.authorizationcenter.config.resourceserver.ResourceServerConfig.RESOURCE_SERVER_REQUEST_MATCHER;
@@ -62,14 +61,14 @@ public class Oauth2ClientSecurityFilterChainConfig {
 
     @Bean
     @Order(OAUTH2_CLIENT_LOGIN_PRECEDENCE)
-    SecurityFilterChain oauth2ClientLoginFilterChain(HttpSecurity http,
+    SecurityFilterChain oauth2ClientLoginFilterChain(HttpSecurity httpSecurity,
                                                      ClientRegistrationRepository clientRegistrationRepository,
                                                      LarkApi larkApi,
                                                      UserService userService,
                                                      CNOAuth2ClientProperties properties) throws Exception {
         RestOperations larkRestTemplate = getLarkRestOperations();
 
-        http
+        httpSecurity
             // 只会对 securityMatcher() 匹配的请求应用这个 SecurityFilterChain
             .securityMatcher(new NegatedRequestMatcher(RESOURCE_SERVER_REQUEST_MATCHER))
             .authorizeHttpRequests(authorizeHttpRequestsConfigurer -> authorizeHttpRequestsConfigurer
@@ -89,9 +88,9 @@ public class Oauth2ClientSecurityFilterChainConfig {
                         .registerRestOperations(LARK_REGISTRATION_ID, larkRestTemplate))))
             .oauth2Client(withDefaults());
         if (properties.isForceHttps()) {
-            http.addFilterBefore(new ForceHttpsPortAndSchemeFilter(), SecurityContextHolderFilter.class);
+            httpSecurity.addFilterBefore(new ForceHttpsPortAndSchemeFilter(), SecurityContextHolderFilter.class);
         }
-        return http.build();
+        return httpSecurity.build();
     }
 
     /**
@@ -121,9 +120,7 @@ public class Oauth2ClientSecurityFilterChainConfig {
                 OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI);
         oAuth2AuthorizationRequestResolver.setAuthorizationRequestCustomizer(oAuth2AuthorizationRequestBuilder ->
             oAuth2AuthorizationRequestBuilder.attributes(attributes -> {
-                if (Optional.ofNullable(attributes.get("registration_id")).orElse("").toString()
-                    .equals(LARK_REGISTRATION_ID)) {
-
+                if (LARK_REGISTRATION_ID.equals(attributes.get("registration_id"))) {
                     // 飞书的 clientId 的 Query 参数名不是默认的 client_id 而是 app_id
                     oAuth2AuthorizationRequestBuilder.parameters(parameters -> {
                         if (parameters.containsKey(OAuth2ParameterNames.CLIENT_ID)) {

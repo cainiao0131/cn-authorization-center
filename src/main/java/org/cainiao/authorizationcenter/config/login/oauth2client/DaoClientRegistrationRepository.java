@@ -22,11 +22,9 @@ public class DaoClientRegistrationRepository implements ClientRegistrationReposi
     @Override
     public ClientRegistration findByRegistrationId(String registrationId) {
         Assert.hasText(registrationId, "registrationId cannot be empty");
-        CnClientRegistration cnClientRegistration = cnClientRegistrationMapperService.findByRegistrationId(registrationId);
-        if (cnClientRegistration == null) {
-            return null;
-        }
-        return cnClientRegistration.toRegisteredClient();
+        CnClientRegistration cnClientRegistration = cnClientRegistrationMapperService
+            .findByRegistrationId(registrationId);
+        return cnClientRegistration == null ? null : cnClientRegistration.toRegisteredClient();
     }
 
     /**
