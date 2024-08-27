@@ -1,4 +1,4 @@
-package org.cainiao.authorizationcenter.controller.system.lark;
+package org.cainiao.authorizationcenter.controller.tenant;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
 @RestController
-@RequestMapping("system/lark")
+@RequestMapping("tenant/lark")
 @RequiredArgsConstructor
 @Tag(name = "Lark", description = "飞书API")
 public class LarkController {

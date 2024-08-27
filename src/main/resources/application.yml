@@ -134,12 +134,9 @@ springdoc:
     - group: default
       packages-to-scan:
         - org.cainiao.authorization.controller
-    - group: open
+    - group: tenant
       packages-to-scan:
-        - org.cainiao.authorization.controller.open
-    - group: platform
-      packages-to-scan:
-        - org.cainiao.authorization.controller.platform
+        - org.cainiao.authorization.controller.tenant
   api-docs:
     enabled: true
     groups:
