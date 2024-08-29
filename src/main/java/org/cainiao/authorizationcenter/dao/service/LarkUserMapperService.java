@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
 public class LarkUserMapperService extends ServiceImpl<LarkUserMapper, LarkUser> implements IService<LarkUser> {
 
     public LarkUser findByLarkUserId(String larkUserId) {
-        return getOne(lambdaQuery().eq(LarkUser::getLarkUserId, larkUserId));
+        return lambdaQuery().eq(LarkUser::getLarkUserId, larkUserId).one();
     }
 }

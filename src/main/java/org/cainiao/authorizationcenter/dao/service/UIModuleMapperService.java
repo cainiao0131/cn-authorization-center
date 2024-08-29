@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
 public class UIModuleMapperService extends ServiceImpl<UIModuleMapper, UIModule> implements IService<UIModule> {
 
     public UIModule findByApplicationIdAndKey(long appId, String key) {
-        return getOne(lambdaQuery().eq(UIModule::getApplicationId, appId).eq(UIModule::getKey, key));
+        return lambdaQuery().eq(UIModule::getApplicationId, appId).eq(UIModule::getKey, key).one();
     }
 }

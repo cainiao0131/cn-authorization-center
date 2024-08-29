@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
 public class UserSystemMapperService extends ServiceImpl<UserSystemMapper, UserSystem> implements IService<UserSystem> {
 
     public boolean existsByUserIdAndSystemId(long userId, long systemId) {
-        return count(lambdaQuery().eq(UserSystem::getUserId, userId).eq(UserSystem::getSystemId, systemId)) > 0;
+        return lambdaQuery().eq(UserSystem::getUserId, userId).eq(UserSystem::getSystemId, systemId).exists();
     }
 }

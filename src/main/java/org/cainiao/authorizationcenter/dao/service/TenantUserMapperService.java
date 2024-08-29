@@ -16,6 +16,6 @@ public class TenantUserMapperService
     extends ServiceImpl<TenantUserMapper, TenantUser> implements IService<TenantUser> {
 
     public boolean existsByTenantIdAndUserId(long tenantId, long userId) {
-        return count(lambdaQuery().eq(TenantUser::getTenantId, tenantId).eq(TenantUser::getUserId, userId)) > 0;
+        return lambdaQuery().eq(TenantUser::getTenantId, tenantId).eq(TenantUser::getUserId, userId).exists();
     }
 }

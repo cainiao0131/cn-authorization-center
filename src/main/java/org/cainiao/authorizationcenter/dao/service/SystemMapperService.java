@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service;
 public class SystemMapperService extends ServiceImpl<SystemMapper, System> implements IService<System> {
 
     public System findById(long id) {
-        return getOne(lambdaQuery().eq(System::getId, id));
+        return lambdaQuery().eq(System::getId, id).one();
     }
 
     public System findByClientId(String clientId) {
-        return getOne(lambdaQuery().eq(System::getClientId, clientId));
+        return lambdaQuery().eq(System::getClientId, clientId).one();
     }
 }

@@ -16,18 +16,18 @@ public class CnRegisteredClientMapperService
     extends ServiceImpl<CnRegisteredClientMapper, CnRegisteredClient> implements IService<CnRegisteredClient> {
 
     public CnRegisteredClient findByRegisteredClientId(String registeredClientId) {
-        return getOne(lambdaQuery().eq(CnRegisteredClient::getRegisteredClientId, registeredClientId));
+        return lambdaQuery().eq(CnRegisteredClient::getRegisteredClientId, registeredClientId).one();
     }
 
     public CnRegisteredClient findByClientId(String clientId) {
-        return getOne(lambdaQuery().eq(CnRegisteredClient::getClientId, clientId));
+        return lambdaQuery().eq(CnRegisteredClient::getClientId, clientId).one();
     }
 
     public boolean existsByClientId(String clientId) {
-        return count(lambdaQuery().eq(CnRegisteredClient::getClientId, clientId)) > 0;
+        return lambdaQuery().eq(CnRegisteredClient::getClientId, clientId).exists();
     }
 
     public boolean existsByClientSecret(String clientSecret) {
-        return count(lambdaQuery().eq(CnRegisteredClient::getClientSecret, clientSecret)) > 0;
+        return lambdaQuery().eq(CnRegisteredClient::getClientSecret, clientSecret).exists();
     }
 }
