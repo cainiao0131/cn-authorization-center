@@ -9,13 +9,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.AuthorizationGrantTypeSetTypeHandler;
-import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.ClientAuthenticationMethodSetTypeHandler;
-import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.ClientSettingsTypeHandler;
-import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.TokenSettingsTypeHandler;
+import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.*;
 import org.cainiao.common.dao.ColumnDefine;
 import org.cainiao.common.dao.IdBaseEntity;
-import org.cainiao.oauth2.client.core.entity.typehandler.SetTypeHandler;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -140,8 +136,10 @@ public class CnRegisteredClient extends IdBaseEntity {
         if (newScopes != null) {
             builder.scopes(scopes -> scopes.addAll(newScopes));
         }
-        builder.clientSettings(getClientSettings());
-        builder.tokenSettings(getTokenSettings());
+        ClientSettings newClientSettings = getClientSettings();
+        builder.clientSettings(newClientSettings == null ? ClientSettings.builder().build() : newClientSettings);
+        TokenSettings newTokenSettings = getTokenSettings();
+        builder.tokenSettings(newTokenSettings == null ? TokenSettings.builder().build() : newTokenSettings);
         return builder.build();
     }
 

@@ -69,6 +69,7 @@ logging:
     "[org.springframework.security]": trace
 
 mybatis-plus:
+  typeHandlersPackage: org.cainiao.authorizationcenter.entity.authorizationserver.typehandler
   configuration:
     log-impl: org.apache.ibatis.logging.log4j2.Log4j2Impl
     auto-mapping-behavior: full

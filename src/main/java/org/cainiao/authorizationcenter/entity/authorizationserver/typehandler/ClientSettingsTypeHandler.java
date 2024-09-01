@@ -6,10 +6,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.cainiao.authorizationcenter.util.JsonUtil;
 import org.cainiao.common.exception.BusinessException;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
@@ -19,19 +17,12 @@ import java.util.Map;
  */
 public class ClientSettingsTypeHandler extends AbstractJsonTypeHandler<ClientSettings> {
 
-    public ClientSettingsTypeHandler(Class<?> type) {
-        super(type);
-    }
-
-    public ClientSettingsTypeHandler(Class<?> type, Field field) {
-        super(type, field);
+    public ClientSettingsTypeHandler() {
+        super(ClientSettings.class);
     }
 
     @Override
     public ClientSettings parse(String jsonString) {
-        if (!StringUtils.hasText(jsonString)) {
-            return ClientSettings.builder().build();
-        }
         try {
             Map<String, Object> settings = JsonUtil.parseJson(jsonString, new TypeReference<>() {
             });

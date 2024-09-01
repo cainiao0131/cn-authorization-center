@@ -7,11 +7,8 @@ import org.cainiao.authorizationcenter.util.JsonUtil;
 import org.cainiao.common.exception.BusinessException;
 import org.cainiao.oauth2.client.util.OAuth2Util;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,19 +19,12 @@ import java.util.stream.Collectors;
  */
 public class ClientAuthenticationMethodSetTypeHandler extends AbstractJsonTypeHandler<Set<ClientAuthenticationMethod>> {
 
-    public ClientAuthenticationMethodSetTypeHandler(Class<?> type) {
-        super(type);
-    }
-
-    public ClientAuthenticationMethodSetTypeHandler(Class<?> type, Field field) {
-        super(type, field);
+    public ClientAuthenticationMethodSetTypeHandler() {
+        super(Set.class);
     }
 
     @Override
     public Set<ClientAuthenticationMethod> parse(String jsonString) {
-        if (!StringUtils.hasText(jsonString)) {
-            return new HashSet<>();
-        }
         try {
             return JsonUtil.parseJson(jsonString, new TypeReference<Set<String>>() {
                 }).stream()
