@@ -15,6 +15,7 @@ import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.Cl
 import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.TokenSettingsTypeHandler;
 import org.cainiao.common.dao.ColumnDefine;
 import org.cainiao.common.dao.IdBaseEntity;
+import org.cainiao.oauth2.client.core.entity.typehandler.SetTypeHandler;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -78,10 +79,13 @@ public class CnRegisteredClient extends IdBaseEntity {
     @TableField(typeHandler = AuthorizationGrantTypeSetTypeHandler.class)
     private Set<AuthorizationGrantType> authorizationGrantTypes;
 
+    @TableField(typeHandler = SetTypeHandler.class)
     private Set<String> redirectUris;
 
+    @TableField(typeHandler = SetTypeHandler.class)
     private Set<String> postLogoutRedirectUris;
 
+    @TableField(typeHandler = SetTypeHandler.class)
     private Set<String> scopes;
 
     @TableField(typeHandler = ClientSettingsTypeHandler.class)
@@ -115,11 +119,27 @@ public class CnRegisteredClient extends IdBaseEntity {
         builder.clientSecret(getClientSecret());
         builder.clientSecretExpiresAt(getClientSecretExpiresAt());
         builder.clientName(getClientName());
-        builder.clientAuthenticationMethods(methods -> methods.addAll(getClientAuthenticationMethods()));
-        builder.authorizationGrantTypes(grantTypes -> grantTypes.addAll(getAuthorizationGrantTypes()));
-        builder.redirectUris(uris -> uris.addAll(getRedirectUris()));
-        builder.postLogoutRedirectUris(redirectUris -> redirectUris.addAll(getPostLogoutRedirectUris()));
-        builder.scopes(scopes -> scopes.addAll(getScopes()));
+        Set<ClientAuthenticationMethod> newClientAuthenticationMethods = getClientAuthenticationMethods();
+        if (newClientAuthenticationMethods != null) {
+            builder.clientAuthenticationMethods(methods -> methods.addAll(newClientAuthenticationMethods));
+        }
+        Set<AuthorizationGrantType> newAuthorizationGrantTypes = getAuthorizationGrantTypes();
+        if (newAuthorizationGrantTypes != null) {
+            builder.authorizationGrantTypes(grantTypes -> grantTypes.addAll(newAuthorizationGrantTypes));
+        }
+        Set<String> newRedirectUris = getRedirectUris();
+        if (newRedirectUris != null) {
+            builder.redirectUris(uris -> uris.addAll(newRedirectUris));
+        }
+        Set<String> newPostLogoutRedirectUris = getPostLogoutRedirectUris();
+        if (newPostLogoutRedirectUris != null) {
+            builder.postLogoutRedirectUris(postLogoutRedirectUris -> postLogoutRedirectUris
+                .addAll(newPostLogoutRedirectUris));
+        }
+        Set<String> newScopes = getScopes();
+        if (newScopes != null) {
+            builder.scopes(scopes -> scopes.addAll(newScopes));
+        }
         builder.clientSettings(getClientSettings());
         builder.tokenSettings(getTokenSettings());
         return builder.build();

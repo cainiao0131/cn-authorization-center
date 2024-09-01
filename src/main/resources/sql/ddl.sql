@@ -402,11 +402,11 @@ COMMENT ON COLUMN public.t_client_user.id IS '主键 ID';
 CREATE TABLE IF NOT EXISTS public.oauth2_registered_client (
 	orc_tenant_id int8 NULL, -- 租户 ID
 	registered_client_id varchar NULL,
-	client_id varchar NULL,
+	client_id varchar NOT NULL,
 	client_id_issued_at text NULL,
-	client_secret varchar NULL,
+	client_secret varchar NOT NULL,
 	client_secret_expires_at text NULL,
-	client_name varchar NULL,
+	client_name varchar NOT NULL,
 	client_authentication_methods text NULL,
 	authorization_grant_types text NULL,
 	redirect_uris text NULL,
@@ -419,7 +419,8 @@ CREATE TABLE IF NOT EXISTS public.oauth2_registered_client (
 	updated_by varchar NULL, -- 最后更新人
 	updated_at timestamp DEFAULT now() NOT NULL, -- 最后更新时间
 	id bigserial NOT NULL, -- 主键 ID
-	CONSTRAINT oauth2_registered_client_pk PRIMARY KEY (id)
+	CONSTRAINT oauth2_registered_client_pk PRIMARY KEY (id),
+	CONSTRAINT oauth2_registered_client_unique UNIQUE (client_id)
 );
 
 COMMENT ON COLUMN public.oauth2_registered_client.orc_tenant_id IS '租户 ID';
