@@ -1,5 +1,6 @@
 package org.cainiao.authorizationcenter.entity.authorizationserver;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,6 +13,7 @@ import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.Au
 import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.ClientAuthenticationMethodSetTypeHandler;
 import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.ClientSettingsTypeHandler;
 import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.TokenSettingsTypeHandler;
+import org.cainiao.common.dao.ColumnDefine;
 import org.cainiao.common.dao.IdBaseEntity;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -56,14 +58,18 @@ public class CnRegisteredClient extends IdBaseEntity {
     /**
      * 主键，表内唯一
      */
+    @TableField(insertStrategy = FieldStrategy.NOT_EMPTY)
+    @ColumnDefine(unique = true)
     private String clientId;
 
     private Instant clientIdIssuedAt;
 
+    @TableField(insertStrategy = FieldStrategy.NOT_EMPTY)
     private String clientSecret;
 
     private Instant clientSecretExpiresAt;
 
+    @TableField(insertStrategy = FieldStrategy.NOT_EMPTY)
     private String clientName;
 
     @TableField(typeHandler = ClientAuthenticationMethodSetTypeHandler.class)

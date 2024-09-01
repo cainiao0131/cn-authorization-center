@@ -82,18 +82,6 @@ mybatis-plus:
       property-format: "\"%s\""
   mapper-locations: classpath*:mapper/**/*.xml
 
-cn:
-  oauth2:
-    server:
-      url: https://cas.cainiao.top/
-  gitea:
-    server: https://gitee.com/
-    client-id: abc
-    client-secret: abc
-    redirect-uri: abc
-    login-success: abc
-    su-token: abc
-
 management:
   info:
     git:
@@ -131,9 +119,9 @@ springdoc:
   swagger-ui:
     enabled: true
   group-configs:
-    - group: default
+    - group: client
       packages-to-scan:
-        - org.cainiao.authorization.controller
+        - org.cainiao.authorization.controller.client
     - group: tenant
       packages-to-scan:
         - org.cainiao.authorization.controller.tenant
