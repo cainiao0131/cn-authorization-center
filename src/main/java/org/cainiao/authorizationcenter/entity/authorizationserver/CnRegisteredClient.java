@@ -10,6 +10,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.*;
+import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.tool.AuthorizationGrantTypeSet;
+import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.tool.ClientAuthenticationMethodSet;
 import org.cainiao.common.dao.ColumnDefine;
 import org.cainiao.common.dao.IdBaseEntity;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -70,10 +72,10 @@ public class CnRegisteredClient extends IdBaseEntity {
     private String clientName;
 
     @TableField(typeHandler = ClientAuthenticationMethodSetTypeHandler.class)
-    private Set<ClientAuthenticationMethod> clientAuthenticationMethods;
+    private ClientAuthenticationMethodSet clientAuthenticationMethods;
 
     @TableField(typeHandler = AuthorizationGrantTypeSetTypeHandler.class)
-    private Set<AuthorizationGrantType> authorizationGrantTypes;
+    private AuthorizationGrantTypeSet authorizationGrantTypes;
 
     @TableField(typeHandler = SetTypeHandler.class)
     private Set<String> redirectUris;
@@ -98,8 +100,9 @@ public class CnRegisteredClient extends IdBaseEntity {
             .clientSecret(registeredClient.getClientSecret())
             .clientSecretExpiresAt(registeredClient.getClientSecretExpiresAt())
             .clientName(registeredClient.getClientName())
-            .clientAuthenticationMethods(registeredClient.getClientAuthenticationMethods())
-            .authorizationGrantTypes(registeredClient.getAuthorizationGrantTypes())
+            .clientAuthenticationMethods(ClientAuthenticationMethodSet
+                .from(registeredClient.getClientAuthenticationMethods()))
+            .authorizationGrantTypes(AuthorizationGrantTypeSet.from(registeredClient.getAuthorizationGrantTypes()))
             .redirectUris(registeredClient.getRedirectUris())
             .postLogoutRedirectUris(registeredClient.getPostLogoutRedirectUris())
             .scopes(registeredClient.getScopes())
@@ -146,8 +149,8 @@ public class CnRegisteredClient extends IdBaseEntity {
     public CnRegisteredClient(LocalDateTime createdTime, LocalDateTime updatedTime, String createdBy, String updatedBy,
                               String clientId, Instant clientIdIssuedAt, String clientSecret,
                               Instant clientSecretExpiresAt, String clientName,
-                              Set<ClientAuthenticationMethod> clientAuthenticationMethods,
-                              Set<AuthorizationGrantType> authorizationGrantTypes,
+                              ClientAuthenticationMethodSet clientAuthenticationMethods,
+                              AuthorizationGrantTypeSet authorizationGrantTypes,
                               Set<String> redirectUris, Set<String> postLogoutRedirectUris, Set<String> scopes,
                               ClientSettings clientSettings, TokenSettings tokenSettings) {
         super(createdBy, createdTime, updatedBy, updatedTime);
