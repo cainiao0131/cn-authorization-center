@@ -39,5 +39,4 @@ public class DynamicAuthenticationEntryPoint extends LoginUrlAuthenticationEntry
         }
         return getLoginFormUrl();
     }
-
 }
