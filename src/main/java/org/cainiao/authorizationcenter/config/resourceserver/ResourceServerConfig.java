@@ -37,9 +37,15 @@ public class ResourceServerConfig {
             .securityMatcher(RESOURCE_SERVER_REQUEST_MATCHER)
             // 资源服务器不会渲染页面，无法在页面添加 CSRF Token，因此禁用
             .csrf(AbstractHttpConfigurer::disable)
-            // 配置 BearerTokenAuthenticationFilter 解码 token 的算法
-            .oauth2ResourceServer(oAuth2ResourceServerConfigurer ->
-                oAuth2ResourceServerConfigurer.jwt(withDefaults()))
+            /*
+             * 配置 BearerTokenAuthenticationFilter 解码 token 的算法
+             * 如果有 Bearer Header 就会校验 OAuth2 access token 并从中取出 scope 并组装 SecurityContext 中的权限
+             * 如果 Bearer Header 为空字符串，即便下一步授权没有配置这个 URI，这一步也会因为不合法的 OAuth2 access token 而拦截
+             * 要想支持匿名访问，就需要 OAuth2 客户端在请求资源服务器时，如果没有 access token 就不要放 Bearer Header
+             * 这样 BearerTokenAuthenticationFilter 就不会报错，而是放过
+             * 而当有合法的 Bearer Header 时，又能获取到对应的 JwtAuthenticationToken
+             */
+            .oauth2ResourceServer(oAuth2ResourceServerConfigurer -> oAuth2ResourceServerConfigurer.jwt(withDefaults()))
             // 配置 AuthorizationFilter，与 OAuth2 客户端的配置本质上是相同的，只是授权服务器只处理 scopes 权限
             .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
                 customizeAuthorizeByAnnotation(requestMappingHandlerMapping, authorizationManagerRequestMatcherRegistry,
@@ -50,9 +56,13 @@ public class ResourceServerConfig {
                         if (authorities.length > 0) {
                             authorizedUrl.hasAnyAuthority(authorities);
                         } else {
+                            /*
+                             * 必须登录，不允许匿名
+                             */
                             authorizedUrl.authenticated();
                         }
                     });
+                // 允许没有加 @CnACL 注解的端点被匿名访问
                 authorizationManagerRequestMatcherRegistry.anyRequest().permitAll();
             });
         return http.build();

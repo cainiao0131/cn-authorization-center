@@ -55,7 +55,9 @@ public class CustomerLarkApiConfig {
         return new WebClientLarkApi(webClient, "https://open.feishu.cn/open-apis");
     }
 
-    @Bean
+    /**
+     * TODO 不用 CacheManager，用别的方案来限流
+     */
     public CacheManager cacheManager() {
         CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager();
         /*

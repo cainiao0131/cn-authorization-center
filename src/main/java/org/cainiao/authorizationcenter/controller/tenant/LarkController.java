@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.cainiao.acl.core.annotation.CnACL;
 import org.cainiao.api.lark.dto.request.docs.apireference.ObtainAllBlocksOfDocumentRequest;
 import org.cainiao.api.lark.dto.request.docs.space.folder.ListItemsInFolderRequest;
 import org.cainiao.api.lark.dto.response.LarkDataResponse;
@@ -29,7 +28,6 @@ public class LarkController {
 
     @GetMapping("/drive/v1/files")
     @Operation(summary = "获取用户云空间中指定文件夹下的文件清单")
-    @CnACL(scopes = {"lark"})
     public LarkDataResponse<LarkFilePage> listItemsInFolder(
         @Parameter(description = "文件夹Token") @RequestParam(value = "folder_token") String folderToken,
         @Parameter(description = "用户 ID 类型") @RequestParam(value = "user_id_type", required = false) String userIdType,
@@ -51,7 +49,6 @@ public class LarkController {
 
     @GetMapping("/drive/explorer/v2/folder/{folderToken}/meta")
     @Operation(summary = "根据 folderToken 获取该文件夹的元信息")
-    @CnACL(scopes = {"lark"})
     public LarkDataResponse<LarkFolderMeta> getFolderMeta(
         @Parameter(description = "文件夹Token") @PathVariable("folderToken") String folderToken) {
 
@@ -60,7 +57,6 @@ public class LarkController {
 
     @GetMapping("/docx/v1/documents/{documentId}/blocks")
     @Operation(summary = "获取文档所有块的富文本内容并分页返回")
-    @CnACL(scopes = {"lark"})
     public LarkDataResponse<LarkBlockPage> obtainAllBlocksOfDocument(
         @Parameter(description = "文档的唯一标识") @PathVariable("documentId") String documentId,
         @Parameter(description = "查询的文档版本，-1 表示文档最新版本") @RequestParam(value = "document_revision_id", required = false) Integer documentRevisionId,
