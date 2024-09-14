@@ -25,13 +25,12 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * <br />
+ * 为了在用 code 换飞书 access token 时，先获取 appAccessToken 并设置到请求头<br />
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
 public class DynamicAuthorizationCodeTokenResponseClient
-    implements OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest>
-{
+    implements OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> {
 
     private static final String INVALID_TOKEN_RESPONSE_ERROR_CODE = "invalid_token_response";
 
@@ -50,23 +49,20 @@ public class DynamicAuthorizationCodeTokenResponseClient
     }
 
     public DynamicAuthorizationCodeTokenResponseClient registerDelegateConverter(
-        String registrationId, Converter<OAuth2AuthorizationCodeGrantRequest, RequestEntity<?>> delegateConverter)
-    {
+        String registrationId, Converter<OAuth2AuthorizationCodeGrantRequest, RequestEntity<?>> delegateConverter) {
         delegateConverterRegistry.put(registrationId, delegateConverter);
         return this;
     }
 
     public DynamicAuthorizationCodeTokenResponseClient registerRestOperations(
-        String registrationId, RestOperations restOperations)
-    {
+        String registrationId, RestOperations restOperations) {
         restOperationsRegistry.put(registrationId, restOperations);
         return this;
     }
 
     @Override
     public OAuth2AccessTokenResponse getTokenResponse(
-        OAuth2AuthorizationCodeGrantRequest authorizationCodeGrantRequest)
-    {
+        OAuth2AuthorizationCodeGrantRequest authorizationCodeGrantRequest) {
         String registrationId = authorizationCodeGrantRequest.getClientRegistration().getRegistrationId();
 
         Assert.notNull(authorizationCodeGrantRequest, "authorizationCodeGrantRequest cannot be null");
@@ -91,8 +87,7 @@ public class DynamicAuthorizationCodeTokenResponseClient
         try {
             return Optional.ofNullable(restOperationsRegistry.get(registrationId)).orElse(defaultRestOperations)
                 .exchange(request, OAuth2AccessTokenResponse.class);
-        }
-        catch (RestClientException ex) {
+        } catch (RestClientException ex) {
             OAuth2Error oauth2Error = new OAuth2Error(INVALID_TOKEN_RESPONSE_ERROR_CODE,
                 "An error occurred while attempting to retrieve the OAuth 2.0 Access Token Response: "
                     + ex.getMessage(),

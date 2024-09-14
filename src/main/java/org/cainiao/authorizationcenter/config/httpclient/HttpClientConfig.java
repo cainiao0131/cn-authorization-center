@@ -23,7 +23,7 @@ public class HttpClientConfig {
      * 当授权服务器作为 OAuth2 客户端调用三方 API 时（如飞书）<br />
      * 需要在发请求前在 HTTP Header 上设置 access token
      *
-     * @param oAuth2AuthorizedClientManager OAuth2AuthorizedClientManager
+     * @param accessTokenRepository AccessTokenRepository
      * @return WebClient
      */
     @Bean

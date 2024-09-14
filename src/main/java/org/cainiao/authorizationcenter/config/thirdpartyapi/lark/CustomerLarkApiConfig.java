@@ -1,4 +1,4 @@
-package org.cainiao.authorizationcenter.config.thirdpartyapi;
+package org.cainiao.authorizationcenter.config.thirdpartyapi.lark;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.cainiao.api.lark.imperative.LarkApi;

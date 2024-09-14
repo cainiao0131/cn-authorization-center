@@ -1,10 +1,12 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client;
 
 import org.cainiao.api.lark.imperative.LarkApi;
+import org.cainiao.authorizationcenter.config.login.oauth2client.accesstoken.DynamicOAuth2AuthorizedClientManager;
 import org.cainiao.authorizationcenter.config.login.oauth2client.httpclient.lark.LarkMapOAuth2AccessTokenResponseConverter;
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.DynamicAuthorizationCodeTokenResponseClient;
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.lark.LarkOAuth2AuthorizationCodeGrantRequestEntityConverter;
 import org.cainiao.authorizationcenter.config.login.oauth2client.userinfoendpoint.DynamicOAuth2UserService;
+import org.cainiao.authorizationcenter.config.thirdpartyapi.lark.LarkAppAccessTokenRepository;
 import org.cainiao.authorizationcenter.service.UserService;
 import org.cainiao.oauth2.client.core.dao.service.CnClientRegistrationMapperService;
 import org.cainiao.oauth2.client.core.filter.ForceHttpsPortAndSchemeFilter;
@@ -19,11 +21,13 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -60,10 +64,21 @@ public class Oauth2ClientSecurityFilterChainConfig {
     }
 
     @Bean
+    OAuth2AuthorizedClientManager oauth2AuthorizedClientManager(
+        ClientRegistrationRepository clientRegistrationRepository,
+        OAuth2AuthorizedClientRepository authorizedClientRepository,
+        LarkApi larkApi,
+        LarkAppAccessTokenRepository larkAppAccessTokenRepository) {
+
+        return new DynamicOAuth2AuthorizedClientManager(clientRegistrationRepository,
+            authorizedClientRepository, larkApi, larkAppAccessTokenRepository);
+    }
+
+    @Bean
     @Order(OAUTH2_CLIENT_LOGIN_PRECEDENCE)
     SecurityFilterChain oauth2ClientLoginFilterChain(HttpSecurity httpSecurity,
                                                      ClientRegistrationRepository clientRegistrationRepository,
-                                                     LarkApi larkApi,
+                                                     LarkAppAccessTokenRepository larkAppAccessTokenRepository,
                                                      UserService userService,
                                                      CNOAuth2ClientProperties properties) throws Exception {
         RestOperations larkRestTemplate = getLarkRestOperations();
@@ -80,7 +95,7 @@ public class Oauth2ClientSecurityFilterChainConfig {
                     // OAuth2AccessTokenResponseClient 可以通过 @Bean 进行自定义，这里为了不影响其它 FilterChain，直接构造
                     .accessTokenResponseClient(new DynamicAuthorizationCodeTokenResponseClient()
                         .registerDelegateConverter(LARK_REGISTRATION_ID,
-                            new LarkOAuth2AuthorizationCodeGrantRequestEntityConverter(larkApi))
+                            new LarkOAuth2AuthorizationCodeGrantRequestEntityConverter(larkAppAccessTokenRepository))
                         .registerRestOperations(LARK_REGISTRATION_ID, larkRestTemplate)))
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                     // OAuth2UserService 可以通过 @Bean 进行自定义，这里为了不影响其它 FilterChain，直接构造
