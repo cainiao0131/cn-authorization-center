@@ -6,13 +6,14 @@ import com.google.common.cache.LoadingCache;
 import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.cainiao.api.lark.dto.response.authenticateandauthorize.getaccesstokens.AppAccessTokenResponse;
-import org.cainiao.api.lark.imperative.LarkApi;
+import org.cainiao.api.lark.imperative.LarkApiWithOutAccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -27,8 +28,9 @@ public class LarkAppAccessTokenRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LarkAppAccessTokenRepository.class);
 
-    private final LarkApi larkApi;
+    private final LarkApiWithOutAccessToken larkApiWithOutAccessToken;
     private final static String SEPARATOR = "@_@";
+    private final ConcurrentHashMap<String, Object> locks = new ConcurrentHashMap<>();
 
     LoadingCache<String, String> accessTokenCache = CacheBuilder.newBuilder()
         // 建议的更新操作线程数，不保证线程数一定是这里设置的值
@@ -52,7 +54,8 @@ public class LarkAppAccessTokenRepository {
             @Override
             public @Nonnull String load(@Nonnull String key) {
                 String[] clientInfo = key.split(SEPARATOR);
-                AppAccessTokenResponse appAccessTokenResponse = larkApi.authenticateAndAuthorize().getAccessTokens()
+                AppAccessTokenResponse appAccessTokenResponse = larkApiWithOutAccessToken
+                    .authenticateAndAuthorizeWithOutAccessToken().getAccessTokensWithOutAccessToken()
                     .getCustomAppAppAccessToken(clientInfo[0], clientInfo[1])
                     .getBody();
                 Assert.notNull(appAccessTokenResponse, "appAccessTokenResponse cannot be null");
@@ -66,12 +69,28 @@ public class LarkAppAccessTokenRepository {
         return getCustomAppAppAccessToken(clientRegistration.getClientId(), clientRegistration.getClientSecret());
     }
 
+    /**
+     * 在 key 的粒度上同步一下
+     * 避免对同一个客户端并发发起多个获取 app access token 的请求
+     * 并发刷新，会导致只有最后一个刷新得到的 app access token 是有效的，其它的会失效
+     * 虽然飞书做了优化来防止这种情况，短期内重复刷新会返回相同的 app access token
+     * 但还是应该通过同步来尽量避免不必要的 I/O
+     * <p>
+     * TODO 没考虑分布式场景
+     *
+     * @param clientId     飞书 OAuth2 客户端 ID
+     * @param clientSecret 飞书 OAuth2 客户端 Secret
+     * @return 飞书 app access token
+     */
     public String getCustomAppAppAccessToken(String clientId, String clientSecret) {
-        try {
-            return accessTokenCache.get(getCacheKey(clientId, clientSecret));
-        } catch (ExecutionException e) {
-            LOGGER.error("accessTokenCache ExecutionException >>> ", e);
-            return null;
+        String key = getCacheKey(clientId, clientSecret);
+        synchronized (locks.computeIfAbsent(key, k -> new Object())) {
+            try {
+                return accessTokenCache.get(key);
+            } catch (ExecutionException e) {
+                LOGGER.error("accessTokenCache ExecutionException >>> ", e);
+                return null;
+            }
         }
     }
 

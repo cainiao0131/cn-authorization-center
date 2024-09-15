@@ -1,6 +1,6 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client;
 
-import org.cainiao.api.lark.imperative.LarkApi;
+import org.cainiao.api.lark.imperative.LarkApiWithAppAccessToken;
 import org.cainiao.authorizationcenter.config.login.oauth2client.accesstoken.DynamicOAuth2AuthorizedClientManager;
 import org.cainiao.authorizationcenter.config.login.oauth2client.httpclient.lark.LarkMapOAuth2AccessTokenResponseConverter;
 import org.cainiao.authorizationcenter.config.login.oauth2client.tokenendpoint.DynamicAuthorizationCodeTokenResponseClient;
@@ -67,11 +67,10 @@ public class Oauth2ClientSecurityFilterChainConfig {
     OAuth2AuthorizedClientManager oauth2AuthorizedClientManager(
         ClientRegistrationRepository clientRegistrationRepository,
         OAuth2AuthorizedClientRepository authorizedClientRepository,
-        LarkApi larkApi,
-        LarkAppAccessTokenRepository larkAppAccessTokenRepository) {
+        LarkApiWithAppAccessToken larkApiWithAppAccessToken) {
 
         return new DynamicOAuth2AuthorizedClientManager(clientRegistrationRepository,
-            authorizedClientRepository, larkApi, larkAppAccessTokenRepository);
+            authorizedClientRepository, larkApiWithAppAccessToken);
     }
 
     @Bean

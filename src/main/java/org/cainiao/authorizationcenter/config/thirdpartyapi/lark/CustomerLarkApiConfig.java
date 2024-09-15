@@ -1,15 +1,22 @@
 package org.cainiao.authorizationcenter.config.thirdpartyapi.lark;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import org.cainiao.api.lark.imperative.LarkApi;
-import org.cainiao.api.lark.impl.imperative.WebClientLarkApi;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.caffeine.CaffeineCacheManager;
+import org.cainiao.api.lark.imperative.LarkApiWithAccessToken;
+import org.cainiao.api.lark.imperative.LarkApiWithAppAccessToken;
+import org.cainiao.api.lark.imperative.LarkApiWithOutAccessToken;
+import org.cainiao.api.lark.imperative.authenticateandauthorize.getaccesstokens.restoperations.GetAccessTokensWithAppAccessToken;
+import org.cainiao.api.lark.imperative.authenticateandauthorize.getaccesstokens.restoperations.GetAccessTokensWithOutAccessToken;
+import org.cainiao.api.lark.imperative.docs.Docs;
+import org.cainiao.api.lark.imperative.docs.docs.apireference.document.Document;
+import org.cainiao.api.lark.imperative.docs.space.folder.Folder;
+import org.cainiao.api.lark.impl.imperative.WebClientLarkApiFactory;
+import org.cainiao.authorizationcenter.config.httpclient.AccessTokenRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.concurrent.TimeUnit;
+import static org.cainiao.authorizationcenter.config.login.oauth2client.Oauth2ClientSecurityFilterChainConfig.LARK_REGISTRATION_ID;
 
 /**
  * TODO 将 api 包独立为单独的项目后，进行 @AutoConfiguration 自动配置<br />
@@ -44,32 +51,70 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class CustomerLarkApiConfig {
 
-    /**
-     * 默认自动配置一个有缓存的飞书 API
-     *
-     * @param restTemplate RestTemplate
-     * @return 有缓存的飞书 API
-     */
     @Bean
-    public LarkApi larkApi(WebClient webClient) {
-        return new WebClientLarkApi(webClient, "https://open.feishu.cn/open-apis");
+    WebClientLarkApiFactory webClientLarkApiFactory(WebClient webClient) {
+        return WebClientLarkApiFactory.builder()
+            .webClient(webClient)
+            .baseUrl("https://open.feishu.cn/open-apis")
+            .build();
     }
 
-    /**
-     * TODO 不用 CacheManager，用别的方案来限流
-     */
-    public CacheManager cacheManager() {
-        CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager();
-        /*
-         * TODO 不应该用基于注解的缓存，应该基于一个缓存接口，便于扩展
-         * 获取 accessToken API 的缓存过期时间都是 2 小时，这里缓存过期时间我 2 小时减 1 分钟
-         * 提前 1 分钟让缓存失效是为了避免因为时间不准确而导致用过期的 accessToken 缓存请求资源
-         * 不同类型的 accessToken 的缓存过期时间是相同的，因此用同一个缓存：accessToken
-         * 不同类型的 accessToken 一定对应不同的 appId，因为一个 appId 只可能有一个 accessToken 类型
-         * 所以不用担心同一个缓存中不同 accessToken 的 Key 冲突
-         */
-        caffeineCacheManager.registerCustomCache("accessToken", Caffeine
-            .newBuilder().expireAfterWrite(119, TimeUnit.MINUTES).build());
-        return caffeineCacheManager;
+    @Bean
+    LarkAccessTokenProvider larkAccessTokenProvider(AccessTokenRepository accessTokenRepository) {
+        return new LarkAccessTokenProvider(accessTokenRepository);
+    }
+
+    @Bean
+    GetAccessTokensWithAppAccessToken getAccessTokensWithAppAccessToken(
+        WebClientLarkApiFactory webClientLarkApiFactory, LarkAppAccessTokenRepository larkAppAccessTokenRepository,
+        ClientRegistrationRepository clientRegistrationRepository) {
+
+        ClientRegistration clientRegistration = clientRegistrationRepository.findByRegistrationId(LARK_REGISTRATION_ID);
+        return webClientLarkApiFactory.getGetAccessTokensWithAppAccessToken(() -> larkAppAccessTokenRepository
+            .getCustomAppAppAccessToken(clientRegistration));
+    }
+
+    @Bean
+    Document document(WebClientLarkApiFactory webClientLarkApiFactory,
+                      LarkAccessTokenProvider larkAccessTokenProvider) {
+        return webClientLarkApiFactory.getDocument(larkAccessTokenProvider);
+    }
+
+    @Bean
+    Folder folder(WebClientLarkApiFactory webClientLarkApiFactory, LarkAccessTokenProvider larkAccessTokenProvider) {
+        return webClientLarkApiFactory.getFolder(larkAccessTokenProvider);
+    }
+
+    @Bean
+    Docs docs(WebClientLarkApiFactory webClientLarkApiFactory, Folder folder, Document document) {
+        return webClientLarkApiFactory.getDocs(folder, document);
+    }
+
+    @Bean
+    GetAccessTokensWithOutAccessToken getAccessTokensWithOutAccessToken(
+        WebClientLarkApiFactory webClientLarkApiFactory) {
+
+        return webClientLarkApiFactory.getGetAccessTokensWithOutAccessToken();
+    }
+
+    @Bean
+    LarkApiWithAppAccessToken larkApiWithAppAccessToken(
+        WebClientLarkApiFactory webClientLarkApiFactory,
+        GetAccessTokensWithAppAccessToken getAccessTokensWithAppAccessToken) {
+
+        return webClientLarkApiFactory.getLarkApiWithAppAccessToken(getAccessTokensWithAppAccessToken);
+    }
+
+    @Bean
+    LarkApiWithAccessToken larkApiWithAccessToken(WebClientLarkApiFactory webClientLarkApiFactory, Docs docs) {
+        return webClientLarkApiFactory.getLarkApiWithAccessToken(docs);
+    }
+
+    @Bean
+    LarkApiWithOutAccessToken larkApiWithOutAccessToken(
+        WebClientLarkApiFactory webClientLarkApiFactory,
+        GetAccessTokensWithOutAccessToken getAccessTokensWithOutAccessToken) {
+
+        return webClientLarkApiFactory.getLarkApiWithOutAccessToken(getAccessTokensWithOutAccessToken);
     }
 }

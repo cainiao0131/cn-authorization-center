@@ -1,7 +1,6 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client.accesstoken;
 
-import org.cainiao.api.lark.imperative.LarkApi;
-import org.cainiao.authorizationcenter.config.thirdpartyapi.lark.LarkAppAccessTokenRepository;
+import org.cainiao.api.lark.imperative.LarkApiWithAppAccessToken;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2RefreshTokenGrantRequest;
@@ -25,8 +24,7 @@ public class DynamicOAuth2AuthorizedClientManager implements OAuth2AuthorizedCli
 
     public DynamicOAuth2AuthorizedClientManager(ClientRegistrationRepository clientRegistrationRepository,
                                                 OAuth2AuthorizedClientRepository authorizedClientRepository,
-                                                LarkApi larkApi,
-                                                LarkAppAccessTokenRepository larkAppAccessTokenRepository) {
+                                                LarkApiWithAppAccessToken larkApiWithAppAccessToken) {
         DefaultOAuth2AuthorizedClientManager delegate = new DefaultOAuth2AuthorizedClientManager(
             clientRegistrationRepository, authorizedClientRepository);
         delegate.setAuthorizedClientProvider(OAuth2AuthorizedClientProviderBuilder.builder()
@@ -40,7 +38,7 @@ public class DynamicOAuth2AuthorizedClientManager implements OAuth2AuthorizedCli
                  */
                 .clockSkew(Duration.ofMinutes(5))
                 .accessTokenResponseClient(
-                    new DynamicDefaultRefreshTokenTokenResponseClient(larkApi, larkAppAccessTokenRepository))
+                    new DynamicDefaultRefreshTokenTokenResponseClient(larkApiWithAppAccessToken))
                 .build())
             .build());
         this.delegate = delegate;

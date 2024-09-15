@@ -1,8 +1,7 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client.accesstoken;
 
 import org.cainiao.api.lark.dto.response.authenticateandauthorize.getaccesstokens.UserAccessTokenResponse;
-import org.cainiao.api.lark.imperative.LarkApi;
-import org.cainiao.authorizationcenter.config.thirdpartyapi.lark.LarkAppAccessTokenRepository;
+import org.cainiao.api.lark.imperative.LarkApiWithAppAccessToken;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -37,11 +36,11 @@ import static org.cainiao.authorizationcenter.config.login.oauth2client.Oauth2Cl
  * <p>
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
-public class DynamicDefaultRefreshTokenTokenResponseClient implements OAuth2AccessTokenResponseClient<OAuth2RefreshTokenGrantRequest> {
+public class DynamicDefaultRefreshTokenTokenResponseClient
+    implements OAuth2AccessTokenResponseClient<OAuth2RefreshTokenGrantRequest> {
 
     private static final String INVALID_TOKEN_RESPONSE_ERROR_CODE = "invalid_token_response";
-    private final LarkApi larkApi;
-    private final LarkAppAccessTokenRepository larkAppAccessTokenRepository;
+    private final LarkApiWithAppAccessToken larkApiWithAppAccessToken;
 
     private Converter<OAuth2RefreshTokenGrantRequest, RequestEntity<?>> requestEntityConverter =
         new ClientAuthenticationMethodValidatingRequestEntityConverter<>(
@@ -49,10 +48,8 @@ public class DynamicDefaultRefreshTokenTokenResponseClient implements OAuth2Acce
 
     private RestOperations restOperations;
 
-    public DynamicDefaultRefreshTokenTokenResponseClient(LarkApi larkApi,
-                                                         LarkAppAccessTokenRepository larkAppAccessTokenRepository) {
-        this.larkApi = larkApi;
-        this.larkAppAccessTokenRepository = larkAppAccessTokenRepository;
+    public DynamicDefaultRefreshTokenTokenResponseClient(LarkApiWithAppAccessToken larkApiWithAppAccessToken) {
+        this.larkApiWithAppAccessToken = larkApiWithAppAccessToken;
         RestTemplate restTemplate = new RestTemplate(
             Arrays.asList(new FormHttpMessageConverter(), new OAuth2AccessTokenResponseHttpMessageConverter()));
         restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
@@ -65,16 +62,15 @@ public class DynamicDefaultRefreshTokenTokenResponseClient implements OAuth2Acce
         ClientRegistration clientRegistration = refreshTokenGrantRequest.getClientRegistration();
         if (LARK_REGISTRATION_ID.equals(clientRegistration.getRegistrationId())) {
             // 飞书刷新 access token
-            return getTokenResponseForLark(refreshTokenGrantRequest, clientRegistration);
+            return getTokenResponseForLark(refreshTokenGrantRequest);
         }
         return getTokenResponseForDefault(refreshTokenGrantRequest);
     }
 
-    private OAuth2AccessTokenResponse getTokenResponseForLark(OAuth2RefreshTokenGrantRequest refreshTokenGrantRequest,
-                                                              ClientRegistration clientRegistration) {
-        UserAccessTokenResponse response = larkApi.authenticateAndAuthorize().getAccessTokens()
-            .refreshUserAccessToken(larkAppAccessTokenRepository.getCustomAppAppAccessToken(clientRegistration),
-                refreshTokenGrantRequest.getRefreshToken().getTokenValue()).getBody();
+    private OAuth2AccessTokenResponse getTokenResponseForLark(OAuth2RefreshTokenGrantRequest refreshTokenGrantRequest) {
+        UserAccessTokenResponse response = larkApiWithAppAccessToken.authenticateAndAuthorizeWithAppAccessToken()
+            .getAccessTokensWithAppAccessToken()
+            .refreshUserAccessToken(refreshTokenGrantRequest.getRefreshToken().getTokenValue()).getBody();
         Assert.notNull(response, "tokenResponse cannot be null");
         UserAccessTokenResponse.TokenInfo tokenInfo = response.getData();
         return OAuth2AccessTokenResponse.withToken(tokenInfo.getAccessToken())
