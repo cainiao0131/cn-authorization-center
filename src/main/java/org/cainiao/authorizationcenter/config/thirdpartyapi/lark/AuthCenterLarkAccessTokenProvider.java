@@ -1,9 +1,8 @@
 package org.cainiao.authorizationcenter.config.thirdpartyapi.lark;
 
 import lombok.RequiredArgsConstructor;
+import org.cainiao.api.lark.impl.util.provider.LarkAccessTokenProvider;
 import org.cainiao.authorizationcenter.config.httpclient.AccessTokenRepository;
-
-import java.util.function.Supplier;
 
 import static org.cainiao.authorizationcenter.config.login.oauth2client.Oauth2ClientSecurityFilterChainConfig.LARK_REGISTRATION_ID;
 
@@ -13,12 +12,12 @@ import static org.cainiao.authorizationcenter.config.login.oauth2client.Oauth2Cl
  * Author: Cai Niao(wdhlzd@163.com)<br />
  */
 @RequiredArgsConstructor
-public class LarkAccessTokenProvider implements Supplier<String> {
+public class AuthCenterLarkAccessTokenProvider implements LarkAccessTokenProvider {
 
     private final AccessTokenRepository accessTokenRepository;
 
     @Override
-    public String get() {
+    public String getAccessToken() {
         return accessTokenRepository.getAccessToken(LARK_REGISTRATION_ID);
     }
 }

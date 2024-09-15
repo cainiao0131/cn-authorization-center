@@ -1,20 +1,12 @@
 package org.cainiao.authorizationcenter.config.thirdpartyapi.lark;
 
-import org.cainiao.api.lark.imperative.LarkApiWithAccessToken;
-import org.cainiao.api.lark.imperative.LarkApiWithAppAccessToken;
-import org.cainiao.api.lark.imperative.LarkApiWithOutAccessToken;
-import org.cainiao.api.lark.imperative.authenticateandauthorize.getaccesstokens.restoperations.GetAccessTokensWithAppAccessToken;
-import org.cainiao.api.lark.imperative.authenticateandauthorize.getaccesstokens.restoperations.GetAccessTokensWithOutAccessToken;
-import org.cainiao.api.lark.imperative.docs.Docs;
-import org.cainiao.api.lark.imperative.docs.docs.apireference.document.Document;
-import org.cainiao.api.lark.imperative.docs.space.folder.Folder;
-import org.cainiao.api.lark.impl.imperative.WebClientLarkApiFactory;
+import org.cainiao.api.lark.impl.util.provider.LarkAccessTokenProvider;
+import org.cainiao.api.lark.impl.util.provider.LarkAppAccessTokenProvider;
 import org.cainiao.authorizationcenter.config.httpclient.AccessTokenRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import static org.cainiao.authorizationcenter.config.login.oauth2client.Oauth2ClientSecurityFilterChainConfig.LARK_REGISTRATION_ID;
 
@@ -52,69 +44,14 @@ import static org.cainiao.authorizationcenter.config.login.oauth2client.Oauth2Cl
 public class CustomerLarkApiConfig {
 
     @Bean
-    WebClientLarkApiFactory webClientLarkApiFactory(WebClient webClient) {
-        return WebClientLarkApiFactory.builder()
-            .webClient(webClient)
-            .baseUrl("https://open.feishu.cn/open-apis")
-            .build();
-    }
-
-    @Bean
     LarkAccessTokenProvider larkAccessTokenProvider(AccessTokenRepository accessTokenRepository) {
-        return new LarkAccessTokenProvider(accessTokenRepository);
+        return new AuthCenterLarkAccessTokenProvider(accessTokenRepository);
     }
 
     @Bean
-    GetAccessTokensWithAppAccessToken getAccessTokensWithAppAccessToken(
-        WebClientLarkApiFactory webClientLarkApiFactory, LarkAppAccessTokenRepository larkAppAccessTokenRepository,
-        ClientRegistrationRepository clientRegistrationRepository) {
-
+    LarkAppAccessTokenProvider larkAppAccessTokenProvider(LarkAppAccessTokenRepository larkAppAccessTokenRepository,
+                                                          ClientRegistrationRepository clientRegistrationRepository) {
         ClientRegistration clientRegistration = clientRegistrationRepository.findByRegistrationId(LARK_REGISTRATION_ID);
-        return webClientLarkApiFactory.getGetAccessTokensWithAppAccessToken(() -> larkAppAccessTokenRepository
-            .getCustomAppAppAccessToken(clientRegistration));
-    }
-
-    @Bean
-    Document document(WebClientLarkApiFactory webClientLarkApiFactory,
-                      LarkAccessTokenProvider larkAccessTokenProvider) {
-        return webClientLarkApiFactory.getDocument(larkAccessTokenProvider);
-    }
-
-    @Bean
-    Folder folder(WebClientLarkApiFactory webClientLarkApiFactory, LarkAccessTokenProvider larkAccessTokenProvider) {
-        return webClientLarkApiFactory.getFolder(larkAccessTokenProvider);
-    }
-
-    @Bean
-    Docs docs(WebClientLarkApiFactory webClientLarkApiFactory, Folder folder, Document document) {
-        return webClientLarkApiFactory.getDocs(folder, document);
-    }
-
-    @Bean
-    GetAccessTokensWithOutAccessToken getAccessTokensWithOutAccessToken(
-        WebClientLarkApiFactory webClientLarkApiFactory) {
-
-        return webClientLarkApiFactory.getGetAccessTokensWithOutAccessToken();
-    }
-
-    @Bean
-    LarkApiWithAppAccessToken larkApiWithAppAccessToken(
-        WebClientLarkApiFactory webClientLarkApiFactory,
-        GetAccessTokensWithAppAccessToken getAccessTokensWithAppAccessToken) {
-
-        return webClientLarkApiFactory.getLarkApiWithAppAccessToken(getAccessTokensWithAppAccessToken);
-    }
-
-    @Bean
-    LarkApiWithAccessToken larkApiWithAccessToken(WebClientLarkApiFactory webClientLarkApiFactory, Docs docs) {
-        return webClientLarkApiFactory.getLarkApiWithAccessToken(docs);
-    }
-
-    @Bean
-    LarkApiWithOutAccessToken larkApiWithOutAccessToken(
-        WebClientLarkApiFactory webClientLarkApiFactory,
-        GetAccessTokensWithOutAccessToken getAccessTokensWithOutAccessToken) {
-
-        return webClientLarkApiFactory.getLarkApiWithOutAccessToken(getAccessTokensWithOutAccessToken);
+        return () -> larkAppAccessTokenRepository.getCustomAppAppAccessToken(clientRegistration);
     }
 }
