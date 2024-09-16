@@ -33,8 +33,9 @@ public class OAuth2ClientAccessTokenRepository implements AccessTokenRepository 
         if (oAuth2AuthorizedClient == null) {
             return null;
         }
+        // TODO 匿名时，应该从数据库的 oauth2_client_registration 获取
         String[] scopes = isAnonymous ? new String[]{"drive:drive", "docx:document",
-            "contact:user.employee_id:readonly", "auth:user.id:read"}
+            "contact:user.employee_id:readonly", "auth:user.id:read", "board:whiteboard:node:read"}
             : oAuth2AuthorizedClient.getAccessToken().getScopes().toArray(new String[0]);
 
         OAuth2AuthorizedClient authorizedClient = oAuth2AuthorizedClientManager.authorize(OAuth2AuthorizeRequest
