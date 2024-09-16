@@ -11,6 +11,8 @@ import org.cainiao.api.lark.dto.response.docs.docs.apireference.document.LarkBlo
 import org.cainiao.api.lark.dto.response.docs.space.folder.LarkFilePage;
 import org.cainiao.api.lark.dto.response.docs.space.folder.LarkFolderMeta;
 import org.cainiao.api.lark.imperative.LarkApiWithAccessToken;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -71,5 +73,13 @@ public class LarkController {
                 .pageSize(pageSize)
                 .pageToken(pageToken)
                 .build()).getBody();
+    }
+
+    @GetMapping("/board/v1/whiteboards/{whiteboardId}/download_as_image")
+    @Operation(summary = "获取画板缩略图片")
+    public ResponseEntity<Resource> whiteboardImage(
+        @Parameter(description = "画板唯一标识") @PathVariable("whiteboardId") String whiteboardId) {
+
+        return larkApiWithAccessToken.docs().board().thumbnail().whiteboardImage(whiteboardId);
     }
 }
