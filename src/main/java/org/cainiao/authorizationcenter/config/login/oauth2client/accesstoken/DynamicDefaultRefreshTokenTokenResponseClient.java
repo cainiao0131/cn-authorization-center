@@ -1,6 +1,7 @@
 package org.cainiao.authorizationcenter.config.login.oauth2client.accesstoken;
 
-import org.cainiao.api.lark.dto.response.authenticateandauthorize.getaccesstokens.UserAccessTokenResponse;
+import org.cainiao.api.lark.dto.response.LarkDataResponse;
+import org.cainiao.api.lark.dto.response.authenticateandauthorize.getaccesstokens.LarkTokenInfo;
 import org.cainiao.api.lark.imperative.LarkApiWithAppAccessToken;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.RequestEntity;
@@ -68,16 +69,16 @@ public class DynamicDefaultRefreshTokenTokenResponseClient
     }
 
     private OAuth2AccessTokenResponse getTokenResponseForLark(OAuth2RefreshTokenGrantRequest refreshTokenGrantRequest) {
-        UserAccessTokenResponse response = larkApiWithAppAccessToken.authenticateAndAuthorizeWithAppAccessToken()
+        LarkDataResponse<LarkTokenInfo> response = larkApiWithAppAccessToken.authenticateAndAuthorizeWithAppAccessToken()
             .getAccessTokensWithAppAccessToken()
             .refreshUserAccessToken(refreshTokenGrantRequest.getRefreshToken().getTokenValue()).getBody();
         Assert.notNull(response, "tokenResponse cannot be null");
-        UserAccessTokenResponse.TokenInfo tokenInfo = response.getData();
-        return OAuth2AccessTokenResponse.withToken(tokenInfo.getAccessToken())
+        LarkTokenInfo larkTokenInfo = response.getData();
+        return OAuth2AccessTokenResponse.withToken(larkTokenInfo.getAccessToken())
             .tokenType(OAuth2AccessToken.TokenType.BEARER)
-            .expiresIn(tokenInfo.getExpiresIn())
-            .scopes(Stream.of(tokenInfo.getScope().split(" ")).collect(Collectors.toSet()))
-            .refreshToken(tokenInfo.getRefreshToken())
+            .expiresIn(larkTokenInfo.getExpiresIn())
+            .scopes(Stream.of(larkTokenInfo.getScope().split(" ")).collect(Collectors.toSet()))
+            .refreshToken(larkTokenInfo.getRefreshToken())
             .build();
     }
 

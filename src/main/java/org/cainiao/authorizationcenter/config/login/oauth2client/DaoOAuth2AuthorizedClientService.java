@@ -46,16 +46,15 @@ public class DaoOAuth2AuthorizedClientService implements OAuth2AuthorizedClientS
     public void saveAuthorizedClient(OAuth2AuthorizedClient authorizedClient, Authentication principal) {
         Assert.notNull(authorizedClient, "authorizedClient cannot be null");
         Assert.notNull(principal, "principal cannot be null");
-        Assert.isTrue(principal.getName().equals(authorizedClient.getPrincipalName()), "principalName must be the same");
 
-        cnOAuth2AuthorizedClientMapperService.saveOrUpdate(authorizedClient);
+        cnOAuth2AuthorizedClientMapperService.saveOrUpdate(authorizedClient, principal.getName());
     }
 
     @Override
     public void removeAuthorizedClient(String clientRegistrationId, String principalName) {
         Assert.hasText(clientRegistrationId, "clientRegistrationId cannot be empty");
         Assert.hasText(principalName, "principalName cannot be empty");
-        
+
         cnOAuth2AuthorizedClientMapperService.remove(clientRegistrationId, principalName);
     }
 

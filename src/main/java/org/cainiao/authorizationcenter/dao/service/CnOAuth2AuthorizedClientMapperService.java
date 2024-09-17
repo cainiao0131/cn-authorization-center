@@ -29,16 +29,18 @@ public class CnOAuth2AuthorizedClientMapperService
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void saveOrUpdate(OAuth2AuthorizedClient authorizedClient) {
-        CnOAuth2AuthorizedClient cnOAuth2AuthorizedClient = CnOAuth2AuthorizedClient.from(authorizedClient);
+    public void saveOrUpdate(OAuth2AuthorizedClient authorizedClient, String principalName) {
+        CnOAuth2AuthorizedClient cnOAuth2AuthorizedClient = CnOAuth2AuthorizedClient
+            .from(authorizedClient, principalName);
         CnOAuth2AuthorizedClient existCnOAuth2AuthorizedClient = findByRegistrationIdAndPrincipalName(authorizedClient
-            .getClientRegistration().getRegistrationId(), authorizedClient.getPrincipalName());
+            .getClientRegistration().getRegistrationId(), principalName);
         if (existCnOAuth2AuthorizedClient == null) {
             if (!save(cnOAuth2AuthorizedClient)) {
                 throw new BusinessException("save CnOAuth2AuthorizedClient fail");
             }
         } else {
             cnOAuth2AuthorizedClient.setId(existCnOAuth2AuthorizedClient.getId());
+            cnOAuth2AuthorizedClient.setCreatedAt(existCnOAuth2AuthorizedClient.getCreatedAt());
             cnOAuth2AuthorizedClient.setUpdatedAt(LocalDateTime.now());
             if (!updateById(cnOAuth2AuthorizedClient)) {
                 throw new BusinessException("updateById CnOAuth2AuthorizedClient fail");

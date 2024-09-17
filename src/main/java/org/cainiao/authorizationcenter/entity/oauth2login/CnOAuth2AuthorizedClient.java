@@ -72,12 +72,12 @@ public class CnOAuth2AuthorizedClient extends IdBaseEntity {
     @Schema(description = "refresh token expires at")
     private Instant refreshTokenExpiresAt;
 
-    public static CnOAuth2AuthorizedClient from(OAuth2AuthorizedClient oAuth2AuthorizedClient) {
+    public static CnOAuth2AuthorizedClient from(OAuth2AuthorizedClient oAuth2AuthorizedClient, String principalName) {
         ClientRegistration clientRegistration = oAuth2AuthorizedClient.getClientRegistration();
         OAuth2AccessToken accessToken = oAuth2AuthorizedClient.getAccessToken();
         CnOAuth2AuthorizedClientBuilder<?, ?> cnOAuth2AuthorizedClientBuilder = CnOAuth2AuthorizedClient.builder()
             .registrationId(clientRegistration.getRegistrationId())
-            .principalName(oAuth2AuthorizedClient.getPrincipalName())
+            .principalName(principalName)
             .accessToken(accessToken.getTokenValue())
             .accessTokenIssuedAt(accessToken.getIssuedAt())
             .accessTokenExpiresAt(accessToken.getExpiresAt())

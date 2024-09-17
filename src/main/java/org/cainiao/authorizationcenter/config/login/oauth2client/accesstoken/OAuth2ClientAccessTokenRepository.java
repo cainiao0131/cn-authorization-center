@@ -4,7 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.*;
+import org.springframework.security.oauth2.client.OAuth2AuthorizationContext;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class OAuth2ClientAccessTokenRepository implements AccessTokenRepository {
 
     private final OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager;
-    private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
+    private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
 
     @Override
     public String getAccessToken(String registrationId) {
@@ -27,14 +31,13 @@ public class OAuth2ClientAccessTokenRepository implements AccessTokenRepository 
          * 如果没有登录，则用公共用户授予的 access token 访问飞书资源
          */
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAnonymous = isAnonymous(authentication);
-        OAuth2AuthorizedClient oAuth2AuthorizedClient = oAuth2AuthorizedClientService
-            .loadAuthorizedClient(registrationId, isAnonymous ? "1" : authentication.getName());
+        OAuth2AuthorizedClient oAuth2AuthorizedClient = oAuth2AuthorizedClientRepository
+            .loadAuthorizedClient(registrationId, authentication, null);
         if (oAuth2AuthorizedClient == null) {
             return null;
         }
         // TODO 匿名时，应该从数据库的 oauth2_client_registration 获取
-        String[] scopes = isAnonymous ? new String[]{"drive:drive", "docx:document",
+        String[] scopes = isAnonymous(authentication) ? new String[]{"drive:drive", "docx:document",
             "contact:user.employee_id:readonly", "auth:user.id:read", "board:whiteboard:node:read"}
             : oAuth2AuthorizedClient.getAccessToken().getScopes().toArray(new String[0]);
 
