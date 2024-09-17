@@ -7,6 +7,10 @@ import org.cainiao.authorizationcenter.entity.oauth2login.CnOAuth2AuthorizedClie
 import org.cainiao.common.exception.BusinessException;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 /**
  * <br />
@@ -24,18 +28,26 @@ public class CnOAuth2AuthorizedClientMapperService
             .eq(CnOAuth2AuthorizedClient::getPrincipalName, principalName).one();
     }
 
-    public void save(OAuth2AuthorizedClient authorizedClient) {
-        if (!save(CnOAuth2AuthorizedClient.from(authorizedClient))) {
-            throw new BusinessException("save CnOAuth2AuthorizedClient fail");
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void saveOrUpdate(OAuth2AuthorizedClient authorizedClient) {
+        CnOAuth2AuthorizedClient cnOAuth2AuthorizedClient = CnOAuth2AuthorizedClient.from(authorizedClient);
+        CnOAuth2AuthorizedClient existCnOAuth2AuthorizedClient = findByRegistrationIdAndPrincipalName(authorizedClient
+            .getClientRegistration().getRegistrationId(), authorizedClient.getPrincipalName());
+        if (existCnOAuth2AuthorizedClient == null) {
+            if (!save(cnOAuth2AuthorizedClient)) {
+                throw new BusinessException("save CnOAuth2AuthorizedClient fail");
+            }
+        } else {
+            cnOAuth2AuthorizedClient.setId(existCnOAuth2AuthorizedClient.getId());
+            cnOAuth2AuthorizedClient.setUpdatedAt(LocalDateTime.now());
+            if (!updateById(cnOAuth2AuthorizedClient)) {
+                throw new BusinessException("updateById CnOAuth2AuthorizedClient fail");
+            }
         }
     }
 
-    public void remove(String registrationId, String principalName) {
-        if (!remove(lambdaQuery().eq(CnOAuth2AuthorizedClient::getRegistrationId, registrationId)
-            .eq(CnOAuth2AuthorizedClient::getPrincipalName, principalName))) {
-
-            throw new BusinessException("remove fail, registrationId = s%, principalName = %s",
-                registrationId, principalName);
-        }
+    public boolean remove(String registrationId, String principalName) {
+        return remove(lambdaQuery().eq(CnOAuth2AuthorizedClient::getRegistrationId, registrationId)
+            .eq(CnOAuth2AuthorizedClient::getPrincipalName, principalName));
     }
 }

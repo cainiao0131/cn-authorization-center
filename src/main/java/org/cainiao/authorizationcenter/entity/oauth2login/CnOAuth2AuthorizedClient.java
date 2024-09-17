@@ -12,7 +12,6 @@ import org.cainiao.authorizationcenter.entity.authorizationserver.typehandler.Se
 import org.cainiao.common.dao.IdBaseEntity;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 
@@ -92,8 +91,8 @@ public class CnOAuth2AuthorizedClient extends IdBaseEntity {
         return cnOAuth2AuthorizedClientBuilder.build();
     }
 
-    public OAuth2AuthorizedClient toOAuth2AuthorizedClient(ClientRegistrationRepository clientRegistrationRepository) {
-        return new OAuth2AuthorizedClient(clientRegistrationRepository.findByRegistrationId(getRegistrationId()),
+    public OAuth2AuthorizedClient toOAuth2AuthorizedClient(ClientRegistration clientRegistration) {
+        return new OAuth2AuthorizedClient(clientRegistration,
             getPrincipalName(),
             new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, getAccessToken(),
                 getAccessTokenIssuedAt(), getAccessTokenExpiresAt(), getAccessTokenScopes()),
