@@ -403,9 +403,9 @@ CREATE TABLE IF NOT EXISTS public.oauth2_registered_client (
 	orc_tenant_id int8 NULL, -- 租户 ID
 	registered_client_id varchar NULL,
 	client_id varchar NOT NULL,
-	client_id_issued_at text NULL,
+	client_id_issued_at timestamp with time zone NULL,
 	client_secret varchar NOT NULL,
-	client_secret_expires_at text NULL,
+	client_secret_expires_at timestamp with time zone NULL,
 	client_name varchar NOT NULL,
 	client_authentication_methods text NULL,
 	authorization_grant_types text NULL,
@@ -429,6 +429,41 @@ COMMENT ON COLUMN public.oauth2_registered_client.created_at IS '创建时间';
 COMMENT ON COLUMN public.oauth2_registered_client.updated_by IS '最后更新人';
 COMMENT ON COLUMN public.oauth2_registered_client.updated_at IS '最后更新时间';
 COMMENT ON COLUMN public.oauth2_registered_client.id IS '主键 ID';
+
+-- public.t_oauth2_authorized_client definition
+
+CREATE TABLE IF NOT EXISTS public.t_oauth2_authorized_client (
+	oac_registration_id varchar NULL, -- registration id
+	oac_principal_name varchar NULL, -- 主体名称
+	oac_access_token varchar NULL, -- access token
+	oac_access_token_issued_at timestamp with time zone NULL, -- access token issued at
+	oac_access_token_expires_at timestamp with time zone NULL, -- access token expires at
+	oac_access_token_scopes text NULL, -- access token scopes
+	oac_refresh_token varchar NULL, -- refresh token
+	oac_refresh_token_issued_at timestamp with time zone NULL, -- refresh token issued at
+	oac_refresh_token_expires_at timestamp with time zone NULL, -- refresh token expires at
+	created_by varchar NULL, -- 创建人
+	created_at timestamp DEFAULT now() NOT NULL, -- 创建时间
+	updated_by varchar NULL, -- 最后更新人
+	updated_at timestamp DEFAULT now() NOT NULL, -- 最后更新时间
+	id bigserial NOT NULL, -- 主键 ID
+	CONSTRAINT t_oauth2_authorized_client_pk PRIMARY KEY (id)
+);
+
+COMMENT ON COLUMN public.t_oauth2_authorized_client.oac_registration_id IS 'registration id';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.oac_principal_name IS '主体名称';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.oac_access_token IS 'access token';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.oac_access_token_issued_at IS 'access token issued at';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.oac_access_token_expires_at IS 'access token expires at';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.oac_access_token_scopes IS 'access token scopes';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.oac_refresh_token IS 'refresh token';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.oac_refresh_token_issued_at IS 'refresh token issued at';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.oac_refresh_token_expires_at IS 'refresh token expires at';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.created_by IS '创建人';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.created_at IS '创建时间';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.updated_by IS '最后更新人';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.updated_at IS '最后更新时间';
+COMMENT ON COLUMN public.t_oauth2_authorized_client.id IS '主键 ID';
 
 -- public.oauth2_client_registration definition
 

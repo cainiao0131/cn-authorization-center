@@ -1,4 +1,4 @@
-package org.cainiao.authorizationcenter.config.httpclient;
+package org.cainiao.authorizationcenter.config.login.oauth2client.accesstoken;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

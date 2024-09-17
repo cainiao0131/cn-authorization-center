@@ -2,7 +2,7 @@ package org.cainiao.authorizationcenter.config.thirdpartyapi.lark;
 
 import org.cainiao.api.lark.impl.util.provider.LarkAccessTokenProvider;
 import org.cainiao.api.lark.impl.util.provider.LarkAppAccessTokenProvider;
-import org.cainiao.authorizationcenter.config.httpclient.AccessTokenRepository;
+import org.cainiao.authorizationcenter.config.login.oauth2client.accesstoken.AccessTokenRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
