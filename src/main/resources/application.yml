@@ -62,11 +62,11 @@ logging:
     name: ${user.home}/logs/${spring.application.name}.log
     path: ${user.home}/logs
   level:
-    org.cainiao: ${LOGGING_LEVEL:INFO}
+    org.cainiao: ${LOGGING_LEVEL:info}
     org.apache.logging: off
     io.swagger: off
     # 测试用 trace
-    org.springframework.security: ${LOGGING_LEVEL:SECURITY}
+    org.springframework.security: ${LOGGING_LEVEL_SECURITY:trace}
 
 mybatis-plus:
   typeHandlersPackage: org.cainiao.authorizationcenter.entity.authorizationserver.typehandler
